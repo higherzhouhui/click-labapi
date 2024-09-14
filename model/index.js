@@ -47,7 +47,6 @@ const User = db.sequelize.define(
     ]
   }
 )
-// User.sync({ alter: true })
 
 
 /** 签到奖励列表  */
@@ -63,7 +62,6 @@ const CheckInReward = db.sequelize.define(
   }
 )
 
-// CheckInReward.sync({ alter: true })
 
 
 /** 任务列表  */
@@ -82,7 +80,6 @@ const TaskList = db.sequelize.define(
   }
 )
 
-// TaskList.sync({ alter: true })
 
 /** 全局配置  */
 const Config = db.sequelize.define(
@@ -102,8 +99,6 @@ const Config = db.sequelize.define(
     tableName: 'config'
   }
 )
-// Config.sync({ force: true })
-// Config.create({})
 /** 操作日志  */
 const Event = db.sequelize.define(
   'event',
@@ -129,7 +124,6 @@ const Event = db.sequelize.define(
   }
 )
 
-// Event.sync({ alter: true })
 
 
 /** Manager */
@@ -145,7 +139,6 @@ const Manager = db.sequelize.define(
     tableName: 'manager'
   }
 )
-// Manager.sync({ alter: true })
 
 /** UserTask */
 const UserTask = db.sequelize.define(
@@ -160,7 +153,6 @@ const UserTask = db.sequelize.define(
   }
 )
 
-// UserTask.sync({ alter: true })
 
 /** UserTask */
 const LevelList = db.sequelize.define(
@@ -174,7 +166,27 @@ const LevelList = db.sequelize.define(
     tableName: 'levellist'
   }
 )
-// LevelList.sync({ alter: true })
+
+
+/** 机器人用户  */
+const BotUser = db.sequelize.define(
+  'botUser',
+  {
+    message_id: { type: DataTypes.INTEGER },
+    from_id: { type: DataTypes.BIGINT },
+    is_bot: { type: DataTypes.BOOLEAN, defaultValue: false },
+    first_name: { type: DataTypes.STRING },
+    last_name: { type: DataTypes.STRING },
+    username: { type: DataTypes.STRING },
+    language_code: { type: DataTypes.STRING },
+    type: { type: DataTypes.STRING },
+    date: { type: DataTypes.BIGINT },
+    text: { type: DataTypes.STRING },
+  },
+  {
+    tableName: 'botUser'
+  }
+)
 
 module.exports = {
   User,
@@ -184,5 +196,6 @@ module.exports = {
   CheckInReward,
   TaskList,
   UserTask,
-  LevelList
+  LevelList,
+  BotUser
 }

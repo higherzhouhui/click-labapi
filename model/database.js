@@ -88,6 +88,8 @@ async function connectDB() {
       await sequelize.sync({ alter: true }); // 将 force 设置为 true 将会删除并重新创建所有表
       logger.log('4.Database synchronization successful!');
       logger.log('5.Server started successful!');
+
+      require('../bot/index.js')
     }
   } catch (error) {
     logger.error('connect db error', error)
