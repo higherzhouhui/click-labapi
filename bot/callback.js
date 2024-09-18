@@ -1,4 +1,6 @@
 const {bot, bot_logger} = require('./index')
+const imageUrl = 'https://raw.githubusercontent.com/higherzhouhui/demo-dapp-with-wallet/sweet/public/assets/logo.jpg?token=GHSAT0AAAAAACU7UOFLC5XZHPZDJQJ2RF7IZWENOOA';
+
 // 处理按钮点击事件
 bot.on('callback_query', (msg) => {
   const data = msg.data;
