@@ -4,11 +4,6 @@ const Redis = require('ioredis')
 var log4js = require('log4js')
 var logger = log4js.getLogger('system')
 
-if (process.env.NODE_ENV == 1) {
-  require('dotenv').config({ path: '../.env.dev' })
-} else {
-  require('dotenv').config({ path: '../.env' })
-}
 const config = process.env
 const cache = new Redis({
   host: config.DB_HOST,

@@ -173,18 +173,38 @@ const BotUser = db.sequelize.define(
   'botUser',
   {
     message_id: { type: DataTypes.INTEGER },
-    from_id: { type: DataTypes.BIGINT },
+    user_id: { type: DataTypes.BIGINT },
     is_bot: { type: DataTypes.BOOLEAN, defaultValue: false },
     first_name: { type: DataTypes.STRING },
     last_name: { type: DataTypes.STRING },
     username: { type: DataTypes.STRING },
     language_code: { type: DataTypes.STRING },
     type: { type: DataTypes.STRING },
-    date: { type: DataTypes.BIGINT },
     text: { type: DataTypes.STRING },
+    lang: { type: DataTypes.STRING, defaultValue: 'en' },
   },
   {
     tableName: 'botUser'
+  }
+)
+
+/** 机器人操作日志  */
+const BotEvent = db.sequelize.define(
+  'botEvent',
+  {
+    message_id: { type: DataTypes.INTEGER },
+    user_id: { type: DataTypes.BIGINT },
+    is_bot: { type: DataTypes.BOOLEAN, defaultValue: false },
+    first_name: { type: DataTypes.STRING },
+    last_name: { type: DataTypes.STRING },
+    username: { type: DataTypes.STRING },
+    language_code: { type: DataTypes.STRING },
+    type: { type: DataTypes.STRING },
+    text: { type: DataTypes.STRING },
+    desc: { type: DataTypes.STRING },
+  },
+  {
+    tableName: 'botEvent'
   }
 )
 
@@ -197,5 +217,6 @@ module.exports = {
   TaskList,
   UserTask,
   LevelList,
-  BotUser
+  BotUser,
+  BotEvent
 }

@@ -1,18 +1,19 @@
+const { token_auth, logger } = require('./middleware/index')
 const express = require('express')
 const cookieParser = require('cookie-parser')
 const cors = require('cors')
 const app = express()
-const { token_auth, logger } = require('./middleware/index')
-var multipart = require('connect-multiparty')
-var log4js = require('log4js')
-var bodyParser = require('body-parser')
+const multipart = require('connect-multiparty')
+const log4js = require('log4js')
+const bodyParser = require('body-parser')
+require('./utils/swaggerUI')(app);
+
 if (process.env.NODE_ENV == 1) {
   require('dotenv').config({ path: './.env.dev' })
 } else {
   require('dotenv').config({ path: './.env' })
 }
 
-require('./utils/swaggerUI')(app);
 
 app.use(express.json())
 app.use(cookieParser())
