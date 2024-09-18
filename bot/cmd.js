@@ -8,8 +8,7 @@ const url = 'https://t.me/frenpetgame_bot/forkfrengame';
 
 // 设置命令处理函数
 bot.onText(/\/start/, async (msg) => {
-  
-  const data = await operation.create_user(msg)
+  await operation.create_user(msg)
   const chatId = msg.chat.id
   // 构建带有图片和按钮的消息
   const text = `Welcome to Click! Дoбpo noЖаловать в Click! 欢迎来到Click! 歡迎來到Click!\n
@@ -21,8 +20,7 @@ EnglishPyсCKИЙ简体中文繁體中文`;
         [
           {
             text: "English",
-            // url: url
-            callback_data: "lang-English"
+            callback_data: "lang-en"
           },
           {
             text: "pyccknn",
@@ -32,18 +30,17 @@ EnglishPyсCKИЙ简体中文繁體中文`;
         [
           {
             text: "简体中文",
-            callback_data: "lang-简体中文"
+            callback_data: "lang-zh"
           },
           {
             text: "繁体中文",
-            callback_data: "lang-繁体中文"
+            callback_data: "lang-zhTw"
           },
         ]
       ]
     }
   };
 
-  // 发送图片和按钮
   bot.sendMessage(chatId, text, replyMarkup);
 });
 
