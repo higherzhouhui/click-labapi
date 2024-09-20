@@ -28,14 +28,10 @@ const User = db.sequelize.define(
     check_date: { type: DataTypes.STRING, defaultValue: '' },
     ticket: { type: DataTypes.BIGINT, defaultValue: 10 },
     wallet: { type: DataTypes.STRING },
-    wallet_nickName: { type: DataTypes.STRING },
-    is_really: { type: DataTypes.BOOLEAN, defaultValue: true },
-    is_Tg: { type: DataTypes.BOOLEAN, defaultValue: true },
-    is_New: { type: DataTypes.BOOLEAN, defaultValue: true },
-    last_play_time: { type: DataTypes.DATE },
-    level: { type: DataTypes.INTEGER, defaultValue: 1},
-    free_gas: { type: DataTypes.INTEGER, defaultValue: 3},
-    is_auto_driver: { type: DataTypes.BOOLEAN, defaultValue: false },
+    type: { type: DataTypes.STRING },
+    lang: { type: DataTypes.STRING, defaultValue: 'en' },
+    score: { type: DataTypes.INTEGER, defaultValue: 0 },
+    juBen_score: { type: DataTypes.INTEGER, defaultValue: 0 },
   },
   {
     tableName: 'user',
@@ -85,15 +81,16 @@ const TaskList = db.sequelize.define(
 const Config = db.sequelize.define(
   'config',
   {
-    right_score: { type: DataTypes.INTEGER, defaultValue: 10 },
-    free_gas: { type: DataTypes.INTEGER, defaultValue: 3 },
-    ticket: { type: DataTypes.INTEGER, defaultValue: 10 },
-    auto_driver: { type: DataTypes.INTEGER, defaultValue: 750 },
-    invite_friends_ratio: { type: DataTypes.INTEGER, defaultValue: 10 },
-    invite_friends_score: { type: DataTypes.INTEGER, defaultValue: 5000 },
-    recovery_time: { type: DataTypes.INTEGER, defaultValue: 90 },
-    bind_wallet_score: { type: DataTypes.INTEGER, defaultValue: 3000 },
-    tg_link: { type: DataTypes.STRING, defaultValue: 'https://t.me/goracing_bot/race' },
+    choose_jb: { type: DataTypes.INTEGER, defaultValue: 5 },
+    reset_jb: { type: DataTypes.INTEGER, defaultValue: 10 },
+    open_new_jb: { type: DataTypes.INTEGER, defaultValue: 50 },
+    click_jb: { type: DataTypes.INTEGER, defaultValue: 3 },
+    done_jb: { type: DataTypes.INTEGER, defaultValue: 25 },
+    done_first_jb: { type: DataTypes.INTEGER, defaultValue: 200 },
+    invite: { type: DataTypes.INTEGER, defaultValue: 100 },
+    feed_back: { type: DataTypes.INTEGER, defaultValue: 20 },
+    bug_back: { type: DataTypes.INTEGER, defaultValue: 50 },
+    bot_url: {type: DataTypes.STRING, defaultValue: 'https://t.me/thelostDog_bot'}
   },
   {
     tableName: 'config'
@@ -179,9 +176,14 @@ const BotUser = db.sequelize.define(
     last_name: { type: DataTypes.STRING },
     username: { type: DataTypes.STRING },
     language_code: { type: DataTypes.STRING },
-    type: { type: DataTypes.STRING },
     text: { type: DataTypes.STRING },
     lang: { type: DataTypes.STRING, defaultValue: 'en' },
+    type: { type: DataTypes.STRING },
+    score: { type: DataTypes.INTEGER, defaultValue: 0 },
+    invite_score: { type: DataTypes.INTEGER, defaultValue: 0 },
+    juBen_score: { type: DataTypes.INTEGER, defaultValue: 0 },
+    sign_score: { type: DataTypes.INTEGER, defaultValue: 0 },
+    startParam: { type: DataTypes.STRING, defaultValue: '0' },
   },
   {
     tableName: 'botUser'
@@ -202,6 +204,7 @@ const BotEvent = db.sequelize.define(
     type: { type: DataTypes.STRING },
     text: { type: DataTypes.STRING },
     desc: { type: DataTypes.STRING },
+    score: { type: DataTypes.INTEGER, defaultValue: 0 },
   },
   {
     tableName: 'botEvent'
