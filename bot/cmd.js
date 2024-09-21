@@ -10,9 +10,7 @@ bot.onText(/\/start/, async (msg) => {
   await operation.create_user(msg)
   const chatId = msg.chat.id
   // 构建带有图片和按钮的消息
-  const text = `Welcome to Click! Дoбpo noЖаловать в Click! 欢迎来到Click! 歡迎來到Click!\n
-Select your preferred language/Bыбepитenpeдno4иTaeMbЙ Я3bIK/设置你的首选语言/設定你的首逆語言
-EnglishPyсCKИЙ简体中文繁體中文`;
+  const text = `Welcome to Click! Дoбpo noЖаловать в Click! 欢迎来到Click! 歡迎來到Click!\nSelect your preferred language/Bыбepитenpeдno4иTaeMbЙ Я3bIK/设置你的首选语言/設定你的首逆語言EnglishPyсCKИЙ简体中文繁體中文`;
   const replyMarkup = {
     reply_markup: {
       inline_keyboard: [
@@ -44,49 +42,6 @@ EnglishPyсCKИЙ简体中文繁體中文`;
 });
 
 
-
-bot.onText(/\/choose/, async (msg) => {
-  const chatId = msg.chat.id
-  // 构建带有图片和按钮的消息
-  const replyMarkup = {
-    caption: 'TEXT\nTEXT', // 图片下方的文字
-    reply_markup: {
-      inline_keyboard: [
-        [
-          {
-            text: "Love",
-            // url: url
-            callback_data: "choose-love"
-          },
-        ],
-        [
-          {
-            text: "Horror",
-            callback_data: "choose-horror"
-          }
-        ],
-        [
-          {
-            text: "Sus",
-            callback_data: "choose-sus"
-          },
-        ],
-        [
-          {
-            text: "jacky",
-            callback_data: "choose-jacky"
-          },
-        ]
-      ]
-    }
-  };
-
-  // 发送图片和按钮
-  bot.sendPhoto(chatId, imageUrl, replyMarkup);
-});
-
-
-
 bot.onText(/\/menu/, async (msg) => {
   const chatId = msg.chat.id
   // 构建带有图片和按钮的消息
@@ -97,7 +52,7 @@ bot.onText(/\/menu/, async (msg) => {
         [
           {
             text: "剧本",
-            callback_data: "all-juBen"
+            callback_data: "scripts"
           },
         ],
         [
@@ -130,6 +85,36 @@ bot.onText(/\/menu/, async (msg) => {
   bot.sendPhoto(chatId, imageUrl, replyMarkup);
 });
 
+
+
+bot.onText(/\/scripts/, async (msg) => {
+  const chatId = msg.chat.id
+  const imageUrl = 'https://img2.baidu.com/it/u=2429226539,3429519924&fm=253&fmt=auto&app=120&f=JPEG?w=829&h=500';
+  const list = await operation.get_scripts(msg)
+  const inline_keyboard = []
+  list.forEach(item => {
+    inline_keyboard.push([
+      {
+        text: item.name,
+        callback_data: `scripts-${item.id}`
+      }
+    ])
+  })
+  inline_keyboard.push([
+    {
+      text: '返回',
+      callback_data: 'menu'
+    }
+  ])
+  // 构建带有图片和按钮的消息
+  const replyMarkup = {
+    caption: '文本1\n文本2',
+    reply_markup: {
+      inline_keyboard: inline_keyboard
+    }
+  };
+  bot.sendPhoto(chatId, imageUrl, replyMarkup);
+});
 
 bot.onText(/\/tasks/, async (msg) => {
   const chatId = msg.chat.id

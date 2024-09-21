@@ -61,90 +61,82 @@ async function init_scripts() {
           {
             pic: 'https://img1.baidu.com/it/u=10553331,2745495550&fm=253&fmt=auto&app=120&f=JPEG?w=665&h=380',
             text: '请问你有玩过密室逃脱吗？',
-            sort: 0,
-            script_id: 1,
             options: [
               {
                 label: '有',
-                value: '',
-                sort: 0,
-                ScriptDetail_id: 1,
               },
               {
                 label: '没有',
-                value: '',
-                sort: 1,
-                ScriptDetail_id: 1,
               },
             ]
           },
           {
             pic: 'https://img0.baidu.com/it/u=2171337979,1721743467&fm=253&fmt=auto&app=120&f=JPEG?w=522&h=221',
             text: '一个古老图书馆的内部，中央有一扇半隐在书架后的神秘门。门上雕刻着复杂的符号和图案，暗示着密室的存在\n如果深陷密室中，请问你会选择什么工具',
-            sort: 0,
-            script_id: 1,
             options: [
               {
                 label: '蜡烛',
-                value: '',
-                sort: 0,
-                ScriptDetail_id: 1,
               },
               {
                 label: '铁锹',
-                value: '',
-                sort: 1,
-                ScriptDetail_id: 1,
               },
               {
                 label: '斧头',
-                value: '',
-                sort: 2,
-                ScriptDetail_id: 1,
               },
               {
                 label: '棍子',
-                value: '',
-                sort: 3,
-                ScriptDetail_id: 1,
               },
             ]
           },
           {
-            pic: 'https://media.9game.cn/gamebase/ieu-gdc-pre-process/images/20240816/5/21/ec28c01cda2b0f70094ae535581f921a.jpg',
-            text: '一个古老图书馆的内部，中央有一扇半隐在书架后的神秘门。门上雕刻着复杂的符号和图案，暗示着密室的存在\n如果深陷密室中，请问你会选择什么工具',
-            sort: 0,
-            script_id: 1,
+            pic: 'https://i2.hdslb.com/bfs/archive/779c577e2616778fdd2b3a26df4fe9f03dae5da8.jpg',
+            text: '经过长时间在密闭环境中，出来后你第一件事是做什么？',
             options: [
               {
-                label: '蜡烛',
+                label: '喝水',
                 value: '',
-                sort: 0,
-                ScriptDetail_id: 1,
               },
               {
-                label: '铁锹',
+                label: '晒太阳',
                 value: '',
-                sort: 1,
-                ScriptDetail_id: 1,
               },
               {
-                label: '斧头',
+                label: '睡觉',
                 value: '',
-                sort: 2,
-                ScriptDetail_id: 1,
               },
               {
-                label: '棍子',
+                label: '去运动',
                 value: '',
-                sort: 3,
-                ScriptDetail_id: 1,
               },
             ]
           },
         ]
       }
     ]
+    
+    scripts.forEach(async (item, sIndex) => {
+      const script_id = await Model.Script.create(item)
+      item.detail.forEach(async (detail, dIndex) => {
+        const scriptDetail_id = await Model.ScriptDetail.create({
+          pic: detail.pic,
+          sort: dIndex,
+          text: detail.text,
+          script_id: script_id.dataValues.id,
+        })
+        
+        detail.options.forEach(async (option, oIndex) => {
+          const sql_option = await Model.ChooseOption.create({
+            label: option.label,
+            sort: oIndex,
+            scriptDetail_id: scriptDetail_id.dataValues.id,
+            script_id: script_id.dataValues.id,
+          })
+          await sql_option.update({
+            value: `${script_id.dataValues.id}-${scriptDetail_id.dataValues.id}-${sql_option.dataValues.id}`
+          })
+        })
+      })
+    })
   } catch (error) {
     admin_logger().error('init Config error:', error)
   }
@@ -181,10 +173,12 @@ function admin_logger() {
 }
 
 async function init_baseData() {
+  await init_scripts();
   await init_taskList();
   await init_levelList();
   await init_manager();
   await init_rewardList();
+
   await init_systemConfig();
 
 
@@ -204,5 +198,6 @@ module.exports = {
   init_systemConfig,
   init_taskList,
   init_levelList,
+  init_scripts,
   init_baseData
 }

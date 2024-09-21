@@ -31,7 +31,7 @@ const User = db.sequelize.define(
     type: { type: DataTypes.STRING },
     lang: { type: DataTypes.STRING, defaultValue: 'en' },
     score: { type: DataTypes.INTEGER, defaultValue: 0 },
-    juBen_score: { type: DataTypes.INTEGER, defaultValue: 0 },
+    complete: { type: DataTypes.INTEGER, defaultValue: 0 },
   },
   {
     tableName: 'user',
@@ -93,7 +93,9 @@ const ChooseOption = db.sequelize.define(
   {
     label: { type: DataTypes.STRING },
     value: { type: DataTypes.STRING },
-    ScriptDetail_id: { type: DataTypes.INTEGER },
+    sort: { type: DataTypes.INTEGER },
+    scriptDetail_id: { type: DataTypes.INTEGER },
+    script_id: { type: DataTypes.INTEGER },
   },
   {
     tableName: 'chooseOption'
@@ -117,6 +119,21 @@ const TaskList = db.sequelize.define(
   }
 )
 
+
+
+/** 用户选择  */
+const UserChoose = db.sequelize.define(
+  'userChoose',
+  {
+    user_id: { type: DataTypes.BIGINT },
+    script_id: { type: DataTypes.INTEGER },
+    detail_id: { type: DataTypes.INTEGER },
+    option_id: { type: DataTypes.INTEGER },
+  },
+  {
+    tableName: 'userChoose'
+  }
+)
 
 /** 全局配置  */
 const Config = db.sequelize.define(
@@ -150,6 +167,7 @@ const Event = db.sequelize.define(
     to_username: { type: DataTypes.STRING, defaultValue: 'system' },
     desc: { type: DataTypes.STRING },
     ticket: { type: DataTypes.INTEGER, defaultValue: 0 },
+    script_id: { type: DataTypes.INTEGER },
     is_really: { type: DataTypes.BOOLEAN, defaultValue: true }
   },
   {
@@ -276,4 +294,5 @@ module.exports = {
   Script,
   ScriptDetail,
   ChooseOption,
+  UserChoose,
 }

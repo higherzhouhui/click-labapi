@@ -6,7 +6,8 @@ const game = require('./game.js')
 const checkInReward = require('./reward.js')
 const task = require('./task.js')
 const level = require('./level.js')
-
+// const admin = require('./admin.js')
+// admin.init_scripts()
 // 用户路由
 router.post('/user/login', user.login)
 router.post('/user/h5PcLogin', user.h5PcLogin)

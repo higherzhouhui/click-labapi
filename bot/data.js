@@ -167,13 +167,228 @@ async function user_feedBack(sendData) {
       score = config.feed_back
       await Model.FeedBack.create(feedData)
       await dataBase.cache.set(`${data.user_id}feedBack`, 0)
-      
+
     } catch (error) {
       console.error(error)
       bot_logger().error(`user_feedBack Error: ${error}`)
     }
   })
   return score
+}
+
+async function get_scripts(sendData) {
+  const data = handleSendData(sendData)
+  operation_log(data)
+  let scripts = []
+  await dataBase.sequelize.transaction(async (t) => {
+    try {
+      scripts = await Model.Script.findAll()
+
+    } catch (error) {
+      console.error(error)
+      bot_logger().error(`demo Error: ${error}`)
+    }
+  })
+  return scripts
+}
+
+async function get_script_detail(sendData, id) {
+  const data = handleSendData(sendData)
+  operation_log(data)
+  let scripts;
+  await dataBase.sequelize.transaction(async (t) => {
+    try {
+      scripts = await Model.Script.findByPk(id)
+      scripts.config = await Model.Config.findOne()
+    } catch (error) {
+      console.error(error)
+      bot_logger().error(`demo Error: ${error}`)
+    }
+  })
+  return scripts
+}
+
+async function get_script_option(sendData, id) {
+  const data = handleSendData(sendData)
+  operation_log(data)
+  let options;
+  await dataBase.sequelize.transaction(async (t) => {
+    try {
+      // 扣分
+      const isBegin = await Model.UserChoose.findOne({
+        where: {
+          user_id: data.user_id,
+          script_id: id
+        }
+      })
+
+      if (!isBegin) {
+        const config = await Model.Config.findOne()
+        const userInfo = await Model.User.findOne({
+          where: {
+            user_id: data.user_id
+          }
+        })
+        if (userInfo.dataValues.score < config.choose_jb) {
+          options = false
+          return
+        }
+        await userInfo.decrement({
+          score: config.choose_jb
+        })
+        await Model.UserChoose.create({
+          user_id: data.user_id,
+          script_id: id
+        })
+        const event_data = {
+          from_user: data.user_id,
+          to_user: data.user_id,
+          from_username: data.username,
+          to_username: data.username,
+          score: 0 - config.choose_jb,
+          type: 'choose_script',
+          desc: `${data.username} choose a script`
+        }
+        await Model.Event.create(event_data)
+      }
+      const scriptDetail = await Model.ScriptDetail.findOne({
+        order: [['sort', 'asc']],
+        where: {
+          script_id: id
+        }
+      })
+      options = scriptDetail.dataValues
+      const list = await Model.ChooseOption.findAll({
+        order: [['sort', 'asc']],
+        where: {
+          ScriptDetail_id: scriptDetail.dataValues.id
+        }
+      })
+      options.list = []
+      list.forEach(element => {
+        options.list.push(element.dataValues)
+      });
+    } catch (error) {
+      console.error(error)
+      bot_logger().error(`demo Error: ${error}`)
+    }
+  })
+  return options
+}
+
+async function choose_option(sendData, id) {
+  const data = handleSendData(sendData, id)
+  operation_log(data)
+  let result = {
+    code: 0
+  }
+  await dataBase.sequelize.transaction(async (t) => {
+    try {
+      const optionDetail = await Model.ChooseOption.findByPk(id)
+
+      const [userChooseDetail, isCreate] = await Model.UserChoose.findOrCreate({
+        where: {
+          user_id: data.user_id,
+          script_id: optionDetail.script_id,
+          detail_id: optionDetail.scriptDetail_id,
+        },
+        defaults: {
+          user_id: data.user_id,
+          script_id: optionDetail.script_id,
+          detail_id: optionDetail.scriptDetail_id,
+          option_id: id
+        }
+      })
+
+      if (!isCreate) {
+        result.code = 400
+        result.msg = '该情节已选择!'
+      }
+      const config = await Model.Config.findOne()
+      const userInfo = await Model.User.findOne({
+        where: {
+          user_id: data.user_id
+        }
+      })
+      if (result.code == 0) {
+        await userInfo.increment({
+          score: config.click_jb,
+        })
+        const event_data = {
+          from_user: data.user_id,
+          to_user: data.user_id,
+          from_username: data.username,
+          to_username: data.username,
+          score: config.click_jb,
+          type: 'choose_option',
+          desc: `${data.username} choose a option`
+        }
+        await Model.Event.create(event_data)
+      }
+
+
+      const _chooseDetail = await Model.ChooseOption.findByPk(id)
+      // current scriptDetail
+      let scriptDetail = await Model.ScriptDetail.findByPk(_chooseDetail.scriptDetail_id)
+      // next scriptDetail
+      scriptDetail = await Model.ScriptDetail.findOne({
+        where: {
+          script_id: _chooseDetail.script_id,
+          sort: scriptDetail.dataValues.sort + 1
+        }
+      })
+
+      if (!scriptDetail) {
+        let add_score = config.done_jb
+        if (result.code == 0) {
+          if (userInfo.dataValues.complete == 0) {
+            add_score += config.done_first_jb
+            const event_data = {
+              from_user: data.user_id,
+              to_user: data.user_id,
+              from_username: data.username,
+              to_username: data.username,
+              score: config.done_first_jb,
+              type: 'done_script_first',
+              desc: `${data.username} done a first script`
+            }
+            await Model.Event.create(event_data)
+          }
+          await userInfo.increment({
+            score: add_score
+          })
+          const event_data = {
+            from_user: data.user_id,
+            to_user: data.user_id,
+            from_username: data.username,
+            to_username: data.username,
+            score: config.done_jb,
+            type: 'done_script',
+            desc: `${data.username} done a script`
+          }
+          await Model.Event.create(event_data)
+        }
+        result.code = 401
+        result.msg = '该剧本已经完成'
+      } else {
+        result.data = scriptDetail.dataValues
+        const list = await Model.ChooseOption.findAll({
+          order: [['sort', 'asc']],
+          where: {
+            ScriptDetail_id: scriptDetail.dataValues.id
+          }
+        })
+        result.data.list = []
+        list.forEach(element => {
+          result.data.list.push(element.dataValues)
+        });
+      }
+    } catch (error) {
+      console.error(error)
+      bot_logger().error(`demo Error: ${error}`)
+    }
+  })
+  return result
 }
 
 async function done_tasks(sendData, task_id) {
@@ -414,6 +629,10 @@ module.exports = {
   done_tasks,
   user_feedBack,
   user_checkIn,
+  get_scripts,
+  get_script_detail,
+  get_script_option,
+  choose_option,
 }
 
 

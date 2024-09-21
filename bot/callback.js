@@ -29,13 +29,13 @@ bot.on('callback_query', async (callbackQuery) => {
             [
               {
                 text: "剧本",
-                callback_data: "all-juBen"
+                callback_data: "scripts"
               },
             ],
             [
               {
                 text: "任务",
-                callback_data: "all-task"
+                callback_data: "tasks"
               }
             ],
             [
@@ -62,7 +62,7 @@ bot.on('callback_query', async (callbackQuery) => {
       bot.sendPhoto(chatId, imageUrl, replyMarkup);
     } else if (data == 'all-juBen') {
 
-    } else if (data == 'all-task') {
+    } else if (data == 'tasks') {
       const list = await operation.get_tasks(callbackQuery)
       const logo = 'https://img2.baidu.com/it/u=3453496786,1847995088&fm=253&fmt=auto?w=1423&h=800'
       let inline_keyboard = []
@@ -158,9 +158,147 @@ bot.on('callback_query', async (callbackQuery) => {
           }
         };
         bot.sendPhoto(chatId, logo, replyMarkup)
-
       } else {
         bot.sendMessage(chatId, '网络异常，请稍后重试')
+      }
+    } else if (data == 'scripts') {
+      const imageUrl = 'https://img2.baidu.com/it/u=2429226539,3429519924&fm=253&fmt=auto&app=120&f=JPEG?w=829&h=500';
+      const list = await operation.get_scripts(callbackQuery)
+      const inline_keyboard = []
+      list.forEach(item => {
+        inline_keyboard.push([
+          {
+            text: item.name,
+            callback_data: `scripts-${item.id}`
+          }
+        ])
+      })
+      inline_keyboard.push([
+        {
+          text: '返回',
+          callback_data: 'menu'
+        }
+      ])
+      // 构建带有图片和按钮的消息
+      const replyMarkup = {
+        caption: '文本1\n文本2',
+        reply_markup: {
+          inline_keyboard: inline_keyboard
+        }
+      };
+      bot.sendPhoto(chatId, imageUrl, replyMarkup);
+    } else if (data.includes('scripts-')) {
+      const script_id = data.replace('scripts-', '')
+      const detail = await operation.get_script_detail(callbackQuery, script_id)
+      
+      const logo = detail.logo
+      const replyMarkup = {
+        caption: `${detail.bg}\n${detail.intro}`,
+        reply_markup: {
+          inline_keyboard: [
+            [
+              {
+                text: `开始  -${detail.config.choose_jb}`,
+                callback_data: `beginScript-${script_id}`
+              },
+              {
+                text: "返回",
+                callback_data: `scripts`
+              },
+            ],
+          ]
+        }
+      };
+      bot.sendPhoto(chatId, logo, replyMarkup)
+    } else if (data.includes('beginScript-')) {
+      const script_id = data.replace('beginScript-', '')
+      const result = await operation.get_script_option(callbackQuery, script_id)
+      if (result) {
+        const imageUrl = result.pic
+        const list = result.list
+        const inline_keyboard = []
+        list.forEach(item => {
+          inline_keyboard.push([
+            {
+              text: item.label,
+              callback_data: `option-${item.id}`
+            }
+          ])
+        })
+        inline_keyboard.push([
+          {
+            text: '返回',
+            callback_data: `scripts-${script_id}`
+          }
+        ])
+        // 构建带有图片和按钮的消息
+        const replyMarkup = {
+          caption: result.text,
+          reply_markup: {
+            inline_keyboard: inline_keyboard
+          }
+        };
+        const botMsg = await bot.sendPhoto(chatId, imageUrl, replyMarkup);
+        cache.set(`sendChoose${chatId}`, botMsg.message_id)
+      } else {
+        bot.sendMessage(chatId, '积分不足，快去邀请好友或者完成任务获取积分吧！')
+      }
+    } else if (data.includes('option-')) {
+      const option_id = data.replace('option-', '')
+      try {
+        const last_option = await cache.get(`sendChoose${chatId}`)
+        bot.deleteMessage(chatId, last_option)
+      } catch (error) {
+        console.error(error)
+        bot_logger().error(`deleteMessage-${chatId}`, `${error}`)
+      }
+      const result = await operation.choose_option(callbackQuery, option_id)
+      if (result.code == 0 || result.code == 400) {
+        const imageUrl = result.data.pic
+        const list = result.data.list
+        const inline_keyboard = []
+        list.forEach(item => {
+          inline_keyboard.push([
+            {
+              text: item.label,
+              callback_data: `option-${item.id}`
+            }
+          ])
+        })
+        inline_keyboard.push([
+          {
+            text: '返回',
+            callback_data: `scripts-${result.data.script_id}`
+          }
+        ])
+        // 构建带有图片和按钮的消息
+        const replyMarkup = {
+          caption: result.data.text,
+          reply_markup: {
+            inline_keyboard: inline_keyboard
+          }
+        };
+        if (result.msg) {
+          bot.sendMessage(chatId, result.msg)
+        }
+        const botMsg = await bot.sendPhoto(chatId, imageUrl, replyMarkup);
+        cache.set(`sendChoose${chatId}`, botMsg.message_id)
+      } else if (result.code == 401) {
+        const imageUrl = 'https://img1.baidu.com/it/u=2483272398,915121754&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500'
+        const replyMarkup = {
+          caption: `恭喜你完成了该剧情！`,
+          reply_markup: {
+            inline_keyboard: [
+              [
+                {
+                  text: "返回",
+                  callback_data: `scripts`
+                },
+              ],
+            ]
+          }
+        };
+        bot.sendPhoto(chatId, imageUrl, replyMarkup)
       }
     }
     bot.answerCallbackQuery(queryId)
