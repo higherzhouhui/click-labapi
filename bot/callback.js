@@ -1,7 +1,8 @@
 const { bot, bot_logger } = require('./index')
 const imageUrl = 'https://img0.baidu.com/it/u=739050917,3625217136&fm=253&fmt=auto&app=138&f=JPEG?w=800&h=800';
 const operation = require('./data')
-const { getMessage } = require('./utils')
+const { getMessage } = require('./utils');
+const { cache } = require('../model/database');
 // 处理按钮点击事件
 bot.on('callback_query', async (callbackQuery) => {
   bot_logger().info('callback_query', `${JSON.stringify(callbackQuery)}`)
@@ -12,17 +13,22 @@ bot.on('callback_query', async (callbackQuery) => {
     const queryId = callbackQuery.id;
 
     // 根据点击的按钮发送不同的消息
-    if (data.includes('lang-')) {
-      let _lang = data.replace('lang-', '')
-      await operation.set_language(chatId, _lang)
-      const caption = await getMessage(chatId, 'lang_caption')
+    if (data.includes('lang-') || data == 'menu') {
+      let caption
+      if (data == 'menu') {
+        caption = ''
+      } else {
+        let _lang = data.replace('lang-', '')
+        await operation.set_language(chatId, _lang)
+        caption = await getMessage(chatId, 'lang_caption')
+      }
       const replyMarkup = {
         caption: caption,
         reply_markup: {
           inline_keyboard: [
             [
               {
-                text: "所有剧本",
+                text: "剧本",
                 callback_data: "all-juBen"
               },
             ],
@@ -47,7 +53,7 @@ bot.on('callback_query', async (callbackQuery) => {
             [
               {
                 text: "反馈",
-                callback_data: "fallBack"
+                callback_data: "feedBack"
               },
             ],
           ]
@@ -78,6 +84,12 @@ bot.on('callback_query', async (callbackQuery) => {
           }
         ])
       })
+      inline_keyboard.push([
+        {
+          text: "返回",
+          callback_data: `menu`
+        },
+      ])
       const replyMarkup = {
         reply_markup: {
           inline_keyboard
@@ -91,16 +103,16 @@ bot.on('callback_query', async (callbackQuery) => {
       const config = await operation.get_config()
       const replyMarkup = {
         caption: `我的积分: ${userInfo.score}\n邀请好友: ${userInfo.count}\n邀请得分: ${userInfo.invite_friends_score || 0}\n邀请链接: ${config.bot_url}?start=${btoa(chatId)}`,
-        // reply_markup: {
-        //   inline_keyboard: [
-        //     [
-        //       {
-        //         text: "邀请好友",
-        //         callback_data: 'copy_invite_url'
-        //       },
-        //     ],
-        //   ]
-        // }
+        reply_markup: {
+          inline_keyboard: [
+            [
+              {
+                text: "返回",
+                callback_data: 'menu'
+              },
+            ],
+          ]
+        }
       };
       bot.sendPhoto(chatId, avatar, replyMarkup);
     } else if (data.includes('check-')) {
@@ -125,13 +137,35 @@ bot.on('callback_query', async (callbackQuery) => {
       const task_id = data.replace('claim-', '')
       const message = await operation.done_tasks(callbackQuery, task_id)
       bot.sendMessage(chatId, message)
-    } else if (data == 'fallBack') {
+    } else if (data == 'feedBack') {
       bot.sendMessage(chatId, '请输入反馈内容：')
+      cache.set(`${chatId}feedBack`, 1)
     } else if (data == 'checkIn') {
-      
+      const singObj = await operation.user_checkIn(callbackQuery)
+      if (singObj) {
+        const logo = 'https://img0.baidu.com/it/u=3343907092,2842815082&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=889'
+        const replyMarkup = {
+          caption: `签到成功，获得${singObj.score}积分,第${singObj.day}天\n连续签到7天更有大礼！\n中断签到重新计算天数\n每天00:00(UTC+0)可签到`,
+          reply_markup: {
+            inline_keyboard: [
+              [
+                {
+                  text: "返回",
+                  callback_data: `menu`
+                },
+              ],
+            ]
+          }
+        };
+        bot.sendPhoto(chatId, logo, replyMarkup)
+
+      } else {
+        bot.sendMessage(chatId, '网络异常，请稍后重试')
+      }
     }
     bot.answerCallbackQuery(queryId)
   } catch (error) {
     bot_logger().error('callback_query', `${error}`)
+    console.error(error)
   }
 });

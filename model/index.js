@@ -59,6 +59,47 @@ const CheckInReward = db.sequelize.define(
 )
 
 
+/** 剧本  */
+const Script = db.sequelize.define(
+  'script',
+  {
+    name: { type: DataTypes.STRING },
+    logo: { type: DataTypes.STRING },
+    bg: {type: DataTypes.STRING },
+    intro: {type: DataTypes.STRING },
+  },
+  {
+    tableName: 'script'
+  }
+)
+
+/** 剧本详情  */
+const ScriptDetail = db.sequelize.define(
+  'scriptDetail',
+  {
+    pic: { type: DataTypes.STRING },
+    text: { type: DataTypes.STRING },
+    sort: { type: DataTypes.INTEGER },
+    script_id: { type: DataTypes.INTEGER },
+  },
+  {
+    tableName: 'scriptDetail'
+  }
+)
+
+/** 选项  */
+const ChooseOption = db.sequelize.define(
+  'chooseOption',
+  {
+    label: { type: DataTypes.STRING },
+    value: { type: DataTypes.STRING },
+    ScriptDetail_id: { type: DataTypes.INTEGER },
+  },
+  {
+    tableName: 'chooseOption'
+  }
+)
+
 
 /** 任务列表  */
 const TaskList = db.sequelize.define(
@@ -83,6 +124,7 @@ const Config = db.sequelize.define(
   {
     choose_jb: { type: DataTypes.INTEGER, defaultValue: 5 },
     reset_jb: { type: DataTypes.INTEGER, defaultValue: 10 },
+    invite_friends_ratio: { type: DataTypes.INTEGER, defaultValue: 10 },
     open_new_jb: { type: DataTypes.INTEGER, defaultValue: 50 },
     click_jb: { type: DataTypes.INTEGER, defaultValue: 3 },
     done_jb: { type: DataTypes.INTEGER, defaultValue: 25 },
@@ -108,12 +150,6 @@ const Event = db.sequelize.define(
     to_username: { type: DataTypes.STRING, defaultValue: 'system' },
     desc: { type: DataTypes.STRING },
     ticket: { type: DataTypes.INTEGER, defaultValue: 0 },
-    guessType: { type: DataTypes.STRING },
-    result: { type: DataTypes.STRING },
-    symbol: { type: DataTypes.STRING, defaultValue: 'BTC' },
-    count: { type: DataTypes.INTEGER, defaultValue: 0 },
-    gas_add: { type: DataTypes.DATE },
-    count_begin: { type: DataTypes.DATE },
     is_really: { type: DataTypes.BOOLEAN, defaultValue: true }
   },
   {
@@ -164,6 +200,20 @@ const LevelList = db.sequelize.define(
   }
 )
 
+
+/** UserTask */
+const FeedBack = db.sequelize.define(
+  'feedBack',
+  {
+    user_id: { type: DataTypes.BIGINT },
+    text: { type: DataTypes.STRING },
+    score: { type: DataTypes.INTEGER },
+    status: { type: DataTypes.STRING, defaultValue: '1' },
+  },
+  {
+    tableName: 'feedBack'
+  }
+)
 
 /** 机器人用户  */
 const BotUser = db.sequelize.define(
@@ -221,5 +271,9 @@ module.exports = {
   UserTask,
   LevelList,
   BotUser,
-  BotEvent
+  BotEvent,
+  FeedBack,
+  Script,
+  ScriptDetail,
+  ChooseOption,
 }

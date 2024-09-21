@@ -1,6 +1,22 @@
 const log4js = require('log4js')
 const Model = require('../model/index')
 const dataBase = require('../model/database')
+const { isLastDay } = require('../utils/common')
+const moment = require('moment/moment')
+
+//-- demo--//
+async function demo(sendData) {
+  const data = handleSendData(sendData)
+  operation_log(data)
+  await dataBase.sequelize.transaction(async (t) => {
+    try {
+
+    } catch (error) {
+      console.error(error)
+      bot_logger().error(`demo Error: ${error}`)
+    }
+  })
+}
 
 async function create_user(sendData) {
   const data = handleSendData(sendData)
@@ -57,6 +73,7 @@ async function create_user(sendData) {
       }
     } catch (error) {
       console.error(error)
+      bot_logger().error(`create_user Error: ${error}`)
     }
   })
 }
@@ -81,27 +98,12 @@ async function get_userInfo(sendData) {
       userInfo.count = count
     } catch (error) {
       console.error(error)
+      bot_logger().error(`get_userInfo Error: ${error}`)
     }
   })
   return userInfo
 }
 
-async function get_tasks(sendData) {
-  const data = handleSendData(sendData)
-  operation_log(data)
-  let list
-  await dataBase.sequelize.transaction(async (t) => {
-    try {
-      const id = data.user_id
-      const sql = `SELECT t.*, ut.status FROM tasklist t LEFT JOIN usertask ut ON t.id = ut.task_id AND ut.user_id=${id} ORDER BY t.id`
-      list = await dataBase.sequelize.query(sql, { type: dataBase.QueryTypes.SELECT })
-
-    } catch (error) {
-      console.error(error)
-    }
-  })
-  return list
-}
 
 async function get_tasks(sendData) {
   const data = handleSendData(sendData)
@@ -115,6 +117,7 @@ async function get_tasks(sendData) {
 
     } catch (error) {
       console.error(error)
+      bot_logger().error(`get_tasks Error: ${error}`)
     }
   })
   return list
@@ -142,9 +145,35 @@ async function check_tasks(sendData, task_id) {
       name = taskInfo.name
     } catch (error) {
       console.error(error)
+      bot_logger().error(`check_tasks Error: ${error}`)
     }
   })
   return name
+}
+
+
+async function user_feedBack(sendData) {
+  const data = handleSendData(sendData)
+  operation_log(data)
+  let score = 0
+  await dataBase.sequelize.transaction(async (t) => {
+    try {
+      const config = await Model.Config.findOne()
+      const feedData = {
+        user_id: data.user_id,
+        text: data.text,
+        score: config.feed_back
+      }
+      score = config.feed_back
+      await Model.FeedBack.create(feedData)
+      await dataBase.cache.set(`${data.user_id}feedBack`, 0)
+      
+    } catch (error) {
+      console.error(error)
+      bot_logger().error(`user_feedBack Error: ${error}`)
+    }
+  })
+  return score
 }
 
 async function done_tasks(sendData, task_id) {
@@ -184,6 +213,7 @@ async function done_tasks(sendData, task_id) {
         })
     } catch (error) {
       console.error(error)
+      bot_logger().error(`done_tasks Error: ${error}`)
     }
   })
   return status
@@ -196,6 +226,7 @@ async function get_config() {
       config = await Model.Config.findOne()
     } catch (error) {
       console.error(error)
+      bot_logger().error(`get_config Error: ${error}`)
     }
   })
   return config
@@ -218,6 +249,7 @@ async function set_language(id, lang) {
       }
     } catch (error) {
       console.error(error)
+      bot_logger().error(`set_language Error: ${error}`)
     }
   })
 }
@@ -238,6 +270,7 @@ async function get_language(id) {
       }
     } catch (error) {
       console.error(error)
+      bot_logger().error(`get_language Error: ${error}`)
       return lang
     }
   })
@@ -260,6 +293,116 @@ async function operation_log(data) {
   })
 }
 
+async function user_checkIn(sendData) {
+  const data = handleSendData(sendData)
+  operation_log(data)
+  let signObj = {}
+  await dataBase.sequelize.transaction(async (t) => {
+    try {
+      const user = await Model.User.findOne({
+        where: {
+          user_id: data.user_id
+        }
+      })
+      let day = 1
+      let today = moment().utc().format('MM-DD')
+      const checkInList = await Model.Event.findAll({
+        where: {
+          type: 'checkIn',
+          from_user: data.user_id,
+        },
+        order: [['createdAt', 'desc']],
+        attributes: ['createdAt']
+      })
+      const newCheckInList = checkInList.filter(item => {
+        return moment(item.dataValues.createdAt).utc().format('MM-DD') != today
+      })
+
+      newCheckInList.map((item, index) => {
+        if (isLastDay(new Date(item.dataValues.createdAt).getTime(), index + 1)) {
+          day = (index + 2) % 7 + 1
+        }
+      })
+
+      const allRewardList = await Model.CheckInReward.findAll({
+        order: [['day', 'asc']],
+        attributes: ['day', 'score', 'ticket']
+      })
+      const rewardList = allRewardList.filter((item) => {
+        return item.dataValues.day == day
+      })
+      const reward = rewardList[0]
+      let check_score = user.check_score
+      let score = user.score
+      let ticket = user.ticket
+      if (user.check_date != today) {
+        check_score += reward.score
+        score += reward.score
+        ticket += reward.ticket
+        await Model.User.update({
+          check_date: today,
+          check_score: check_score,
+          score: score,
+          ticket: ticket
+        }, {
+          where: {
+            user_id: data.user_id
+          },
+        })
+
+        let event_data = {
+          type: 'checkIn',
+          from_user: data.user_id,
+          from_username: user.username,
+          to_user: data.user_id,
+          to_username: user.username,
+          desc: `${user.username} is checked day: ${day}`,
+          score: reward.score,
+          ticket: reward.ticket,
+        }
+        await Model.Event.create(event_data)
+        if (user.startParam) {
+          const parentUser = await Model.User.findOne({
+            where: {
+              user_id: user.startParam
+            }
+          })
+          if (parentUser) {
+            const config = await Model.Config.findOne()
+            const score_ratio = Math.floor(reward.score * config.invite_friends_ratio / 100)
+            await parentUser.increment({
+              score: score_ratio,
+              invite_friends_score: score_ratio
+            })
+            event_data = {
+              type: 'checkIn_parent',
+              from_user: data.user_id,
+              from_username: user.username,
+              to_user: parentUser.user_id,
+              to_username: parentUser.username,
+              score: score_ratio,
+              ticket: 0,
+              desc: `${parentUser.username} get checkIn reward ${score_ratio} $CAT from ${user.username}`
+            }
+            await Model.Event.create(event_data)
+          }
+        }
+      }
+      signObj = {
+        check_date: today,
+        score: reward.score,
+        day: day,
+      }
+    } catch (error) {
+      console.error(error)
+      bot_logger().error(`user_checkIn Error: ${error}`)
+    }
+  })
+  return signObj
+}
+
+
+
 module.exports = {
   create_user,
   set_language,
@@ -269,6 +412,8 @@ module.exports = {
   get_tasks,
   check_tasks,
   done_tasks,
+  user_feedBack,
+  user_checkIn,
 }
 
 

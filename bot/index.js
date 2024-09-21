@@ -1,6 +1,5 @@
 const TelegramBot = require('node-telegram-bot-api');
 const log4js = require('log4js')
-
 // 用你的机器人Token替换YOUR_BOT_TOKEN
 const TOKEN = process.env.TOKEN;
 
