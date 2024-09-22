@@ -190,15 +190,18 @@ bot.on('callback_query', async (callbackQuery) => {
     } else if (data.includes('scripts-')) {
       const script_id = data.replace('scripts-', '')
       const detail = await operation.get_script_detail(callbackQuery, script_id)
-      
       const logo = detail.logo
+      let text = `开始  -${detail.config.choose_jb}`
+      if (detail.isDone) {
+        text = `重选 -${detail.config.reset_jb}`
+      }
       const replyMarkup = {
         caption: `${detail.bg}\n${detail.intro}`,
         reply_markup: {
           inline_keyboard: [
             [
               {
-                text: `开始  -${detail.config.choose_jb}`,
+                text: text,
                 callback_data: `beginScript-${script_id}`
               },
               {

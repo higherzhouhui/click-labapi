@@ -2,7 +2,7 @@ const list = [
   {
     score: 10,
     link: 'https://x.com/aelfblockchain',
-    name: 'FollowX',
+    name: 'Follow X',
     ticket: 0,
     linkType: 'telegram',
     type: 'Game tasks',
@@ -10,7 +10,7 @@ const list = [
   {
     score: 10,
     link: 'https://t.me/+Wmv_Z-_7n-QwMDY1',
-    name: 'JoinTG',
+    name: 'Join TG',
     ticket: 0,
     linkType: 'self',
     type: 'portKey Wallet tasks',
@@ -18,7 +18,7 @@ const list = [
   {
     score: 10,
     link: 'https://t.me/+Wmv_Z-_7n-QwMDY1',
-    name: 'JoinTGs',
+    name: 'Join TGs',
     ticket: 0,
     linkType: 'self',
     type: 'portKey Wallet tasks',

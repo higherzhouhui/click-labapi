@@ -67,7 +67,7 @@ async function create_user(sendData) {
           score: 0,
           from_username: data.username,
           to_username: data.username,
-          desc: `${data.username}  join us!`
+          desc: `${data.username} join us!`
         }
         await Model.Event.create(event_data)
       }
@@ -200,6 +200,16 @@ async function get_script_detail(sendData, id) {
     try {
       scripts = await Model.Script.findByPk(id)
       scripts.config = await Model.Config.findOne()
+      const isDone = await Model.Event.findOne({
+        where: {
+          from_user: data.user_id,
+          type: 'done_script',
+          script_id: id
+        }
+      })
+      if (isDone) {
+        scripts.isDone = true
+      }
     } catch (error) {
       console.error(error)
       bot_logger().error(`demo Error: ${error}`)
@@ -214,6 +224,46 @@ async function get_script_option(sendData, id) {
   let options;
   await dataBase.sequelize.transaction(async (t) => {
     try {
+      const config = await Model.Config.findOne()
+
+      const isDone = await Model.Event.findOne({
+        where: {
+          from_user: data.user_id,
+          type: 'done_script',
+          script_id: id
+        }
+      })
+      
+      if (isDone) {
+        const isReset = await Model.Event.findOne({
+          where: {
+            from_user: data.user_id,
+            script_id: id,
+            type: 'reset_script'
+          }
+        })
+        if (!isReset) {
+          await Model.User.decrement({
+            score: config.reset_jb
+          }, {
+            where: {
+              user_id: data.user_id,
+            }
+          })
+          const event_data = {
+            from_user: data.user_id,
+            to_user: data.user_id,
+            from_username: data.username,
+            to_username: data.username,
+            score: 0 - config.reset_jb,
+            type: 'reset_script',
+            script_id: id,
+            desc: `${data.username} reset a script`
+          }
+          await Model.Event.create(event_data)
+        }
+      }
+
       // 扣分
       const isBegin = await Model.UserChoose.findOne({
         where: {
@@ -223,7 +273,6 @@ async function get_script_option(sendData, id) {
       })
 
       if (!isBegin) {
-        const config = await Model.Config.findOne()
         const userInfo = await Model.User.findOne({
           where: {
             user_id: data.user_id
@@ -247,6 +296,7 @@ async function get_script_option(sendData, id) {
           to_username: data.username,
           score: 0 - config.choose_jb,
           type: 'choose_script',
+          script_id: id,
           desc: `${data.username} choose a script`
         }
         await Model.Event.create(event_data)
@@ -302,7 +352,10 @@ async function choose_option(sendData, id) {
 
       if (!isCreate) {
         result.code = 400
-        result.msg = '该情节已选择!'
+        result.msg = ''
+        await userChooseDetail.update({
+          option_id: id
+        })
       }
       const config = await Model.Config.findOne()
       const userInfo = await Model.User.findOne({
@@ -320,6 +373,7 @@ async function choose_option(sendData, id) {
           from_username: data.username,
           to_username: data.username,
           score: config.click_jb,
+          script_id: optionDetail.script_id,
           type: 'choose_option',
           desc: `${data.username} choose a option`
         }
@@ -355,7 +409,8 @@ async function choose_option(sendData, id) {
             await Model.Event.create(event_data)
           }
           await userInfo.increment({
-            score: add_score
+            score: add_score,
+            complete: 1,
           })
           const event_data = {
             from_user: data.user_id,
@@ -364,6 +419,7 @@ async function choose_option(sendData, id) {
             to_username: data.username,
             score: config.done_jb,
             type: 'done_script',
+            script_id: optionDetail.script_id,
             desc: `${data.username} done a script`
           }
           await Model.Event.create(event_data)
@@ -519,7 +575,7 @@ async function user_checkIn(sendData) {
           user_id: data.user_id
         }
       })
-      let day = 1
+      let day = 0
       let today = moment().utc().format('MM-DD')
       const checkInList = await Model.Event.findAll({
         where: {
@@ -535,7 +591,7 @@ async function user_checkIn(sendData) {
 
       newCheckInList.map((item, index) => {
         if (isLastDay(new Date(item.dataValues.createdAt).getTime(), index + 1)) {
-          day = (index + 2) % 7 + 1
+          day = (index + 1) % 7
         }
       })
 
@@ -543,10 +599,13 @@ async function user_checkIn(sendData) {
         order: [['day', 'asc']],
         attributes: ['day', 'score', 'ticket']
       })
-      const rewardList = allRewardList.filter((item) => {
-        return item.dataValues.day == day
-      })
-      const reward = rewardList[0]
+      let reward = allRewardList[0]
+      try {
+        reward = allRewardList[day]
+      } catch (error) {
+        bot_logger().error('check day Error:', 'dayIndex:', day, `${error}`)
+      }
+
       let check_score = user.check_score
       let score = user.score
       let ticket = user.ticket
@@ -571,7 +630,7 @@ async function user_checkIn(sendData) {
           from_username: user.username,
           to_user: data.user_id,
           to_username: user.username,
-          desc: `${user.username} is checked day: ${day}`,
+          desc: `${user.username} is checked day: ${reward.day}`,
           score: reward.score,
           ticket: reward.ticket,
         }
@@ -597,7 +656,7 @@ async function user_checkIn(sendData) {
               to_username: parentUser.username,
               score: score_ratio,
               ticket: 0,
-              desc: `${parentUser.username} get checkIn reward ${score_ratio} $CAT from ${user.username}`
+              desc: `${parentUser.username} get checkIn reward ${score_ratio} Pts from ${user.username}`
             }
             await Model.Event.create(event_data)
           }
@@ -606,7 +665,7 @@ async function user_checkIn(sendData) {
       signObj = {
         check_date: today,
         score: reward.score,
-        day: day,
+        day: reward.day,
       }
     } catch (error) {
       console.error(error)

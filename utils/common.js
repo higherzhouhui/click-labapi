@@ -5,7 +5,7 @@ const SECRET_KEY = 'CAT_API'
 
 function createToken(data) {
   const token = jwt.sign(
-    { user: {username: data.username, id: data.user_id} },
+    { user: { username: data.username, id: data.user_id } },
     SECRET_KEY,
     { expiresIn: '10 days' }
   )
