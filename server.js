@@ -25,6 +25,15 @@ app.use(bodyParser.urlencoded({ extended: false }))
 // 解析formdata数据
 app.use(multipart())
 
+app.post('/webhook', (req, res) => {
+  // 处理Telegram发送的更新
+  console.log(req.body, 111111);
+
+  // 确认接收成功
+  res.status(200).send();
+});
+
+
 // 存储IP和请求时间的缓存
 const rateLimitCache = new Map();
  
@@ -85,6 +94,9 @@ app.use((req, resp, next) => {
 app.use(logger)
 
 app.use('/api', require('./router/index'))
+
+
+
 
 function system_logger() {
   log4js.configure({

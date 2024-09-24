@@ -7,6 +7,19 @@ const bot = new TelegramBot(TOKEN, { polling: true });
 
 bot_logger().info('6.BOT connection has establish successfully');
 
+
+// 设置Webhook
+const webhookUrl = 'https://germ.wedoctor.top/webhook'; // 你的Webhook URL
+const webhookOptions = {
+    // 可选参数，例如证书路径等
+};
+
+bot.setWebHook(webhookUrl, webhookOptions)
+    .then(() => console.log('Webhook is set'))
+    .catch(error => console.error('Error setting webhook:', error));
+
+
+
 function bot_logger() {
   log4js.configure({
     appenders: {

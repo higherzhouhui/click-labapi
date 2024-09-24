@@ -1,47 +1,66 @@
 const { bot, bot_logger } = require('./index')
 const operation = require('./data');
 const { cache } = require('../model/database');
+const utils = require('./utils')
 
 // 图片的URL
 const imageUrl = 'https://img0.baidu.com/it/u=739050917,3625217136&fm=253&fmt=auto&app=138&f=JPEG?w=800&h=800';
 
 // 设置命令处理函数
 bot.onText(/\/start/, async (msg) => {
+  const chatId = msg.chat.id
   try {
     await operation.create_user(msg)
-    const chatId = msg.chat.id
-    // 构建带有图片和按钮的消息
-    const text = `Welcome to Click! Дoбpo noЖаловать в Click! 欢迎来到Click! 歡迎來到Click!\nSelect your preferred language/Bыбepитenpeдno4иTaeMbЙ Я3bIK/设置你的首选语言/設定你的首逆語言EnglishPyсCKИЙ简体中文繁體中文`;
+    // 构建带有视频和按钮的消息
+    const source = utils.getLocalSource('./public/gif/welcome.gif')
+    const text = `\nWelcome to (play)Lab Alpha!\n📜 You’ve just unlocked the first chapter of our journey!\n🧙‍♂️ In this alpha version, you’ll dive into a fun, interactive short story. Make your choices, earn points, and see where the plot takes you! These points will be crucial for upcoming rewards, so don’t miss a chance to build them up.\n💥 And guess what? More features from Click are on the way—you’re part of something big!\n\nSubscribe to our channel for more points and updates!(https://t.me/+CFUnnwrLIcgzOWFl)`;
     const replyMarkup = {
+      caption: text,
+      width: 640,
+      height: 360,
       reply_markup: {
         inline_keyboard: [
           [
             {
-              text: "English",
-              callback_data: "lang-en"
+              text: "Start Your Story",
+              callback_data: 'scripts',
             },
             {
-              text: "Руская",
-              callback_data: "lang-russian"
-            }
+              text: "Invite for Points",
+              callback_data: 'share_link',
+            },
+            {
+              text: "Follow Our X (+1 Story Limit)",
+              url: 'https://x.com/binance',
+            },
           ],
-          [
-            {
-              text: "简体中文",
-              callback_data: "lang-zh"
-            },
-            {
-              text: "繁体中文",
-              callback_data: "lang-zhTw"
-            },
-          ]
+          // [
+          //   {
+          //     text: "English",
+          //     callback_data: "lang-en"
+          //   },
+          //   {
+          //     text: "Руская",
+          //     callback_data: "lang-russian"
+          //   }
+          // ],
+          // [
+          //   {
+          //     text: "简体中文",
+          //     callback_data: "lang-zh"
+          //   },
+          //   {
+          //     text: "繁体中文",
+          //     callback_data: "lang-zhTw"
+          //   },
+          // ]
         ]
       }
     };
 
-    bot.sendMessage(chatId, text, replyMarkup);
+    bot.sendVideo(chatId, source, replyMarkup, {contentType: 'application/octet-stream', filename: 'welcome'});
   } catch (error) {
-
+    bot_logger().error(`${chatId} start error: ${error}`)
   }
 });
 
