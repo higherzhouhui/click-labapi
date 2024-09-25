@@ -1,5 +1,4 @@
 const { bot, bot_logger } = require('./index')
-const imageUrl = 'https://img0.baidu.com/it/u=739050917,3625217136&fm=253&fmt=auto&app=138&f=JPEG?w=800&h=800';
 const operation = require('./data')
 const { getMessage, getLocalSource } = require('./utils');
 const { cache } = require('../model/database');
@@ -137,8 +136,7 @@ bot.on('callback_query', async (callbackQuery) => {
       const message = await operation.done_tasks(callbackQuery, task_id)
       bot.sendMessage(chatId, message)
     } else if (data == 'feedBack') {
-      bot.sendMessage(chatId, 'Please Input:')
-      cache.set(`${chatId}feedBack`, 1)
+      bot.sendMessage(chatId, 'OK. Send me a FAQ and content. Please use this format:\n\nFAQ - content')
     } else if (data == 'checkIn') {
       const singObj = await operation.user_checkIn(callbackQuery)
       if (singObj) {
@@ -449,7 +447,7 @@ bot.on('callback_query', async (callbackQuery) => {
       bot.sendPhoto(chatId, logo, replyMarkup)
     } else if (data == 'share_link') {
       const config = await operation.get_config()
-      const msg = `Share Link: ${config.bot_url}?start=${btoa(chatId)}`
+      const msg = `Invite Link: ${config.bot_url}?start=${btoa(chatId)}`
       bot.sendMessage(chatId, msg)
     }
     bot.answerCallbackQuery(queryId)
@@ -458,3 +456,4 @@ bot.on('callback_query', async (callbackQuery) => {
     console.error(error)
   }
 });
+

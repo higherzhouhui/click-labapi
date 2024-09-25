@@ -151,7 +151,8 @@ const Config = db.sequelize.define(
     done_jb: { type: DataTypes.INTEGER, defaultValue: 50 },
     done_really_jb: { type: DataTypes.INTEGER, defaultValue: 100 },
     done_jb_all: { type: DataTypes.INTEGER, defaultValue: 500 },
-    invite: { type: DataTypes.INTEGER, defaultValue: 1 },
+    invite: { type: DataTypes.INTEGER, defaultValue: 100 },
+    invite_ticket: { type: DataTypes.INTEGER, defaultValue: 1 },
     feed_back: { type: DataTypes.INTEGER, defaultValue: 20 },
     bug_back: { type: DataTypes.INTEGER, defaultValue: 50 },
     bot_url: {type: DataTypes.STRING, defaultValue: 'https://t.me/Click_alpha_bot'}

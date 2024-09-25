@@ -18,6 +18,24 @@ async function demo(sendData) {
   })
 }
 
+async function get_all_user(sendData) {
+  const data = handleSendData(sendData)
+  operation_log(data)
+  const allUser = []
+  await dataBase.sequelize.transaction(async (t) => {
+    try {
+      const all = await Model.User.findAll()
+      all.forEach(item => {
+        allUser.push(item.dataValues.user_id)
+      })
+    } catch (error) {
+      console.error(error)
+      bot_logger().error(`demo Error: ${error}`)
+    }
+  })
+  return allUser
+}
+
 async function create_user(sendData) {
   const data = handleSendData(sendData)
   operation_log(data)
@@ -34,23 +52,25 @@ async function create_user(sendData) {
         const parameter = text.split(' ')[1]; // 假设参数紧跟在/start之后
         if (parameter) {
           data.text = '/start'
-          const startParam = parseInt(atob(data.parameter))
+          const startParam = parseInt(atob(parameter))
           if (!isNaN(startParam)) {
             data.startParam = startParam
             const parentUser = await Model.User.findOne({
               user_id: startParam
             })
             if (parentUser) {
-              const config = await Model.Config.findOne({})
+              const config = await Model.Config.findOne()
               parentUser.increment({
                 invite_friends_score: config.invite,
                 score: config.invite,
+                ticket: config.invite_ticket
               })
               const event_data = {
                 type: 'Inviting',
                 from_user: data.user_id,
                 to_user: startParam,
                 score: config.invite,
+                ticket: config.config,
                 from_username: data.username,
                 to_username: parentUser.username,
                 desc: `${parentUser.username} invite ${data.username} join us!`
@@ -882,6 +902,7 @@ module.exports = {
   choose_option,
   game_over,
   accord_option_scriptId,
+  get_all_user,
 }
 
 

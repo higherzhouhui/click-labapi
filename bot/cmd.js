@@ -269,8 +269,7 @@ bot.onText(/\/user/, async (msg) => {
 bot.onText(/\/feedback/, async (msg) => {
   try {
     const chatId = msg.chat.id
-    bot.sendMessage(chatId, '请输入反馈内容：')
-    cache.set(`${chatId}feedBack`, 1)
+    bot.sendMessage(chatId, 'OK. Send me a FAQ and content. Please use this format:\n\b\bFAQ - content')
   } catch (error) {
     bot_logger().error(`feedback Error: ${error}`)
   }
@@ -316,14 +315,24 @@ bot.onText(/\/latest/, async (msg) => {
   }
 })
 
+
+bot.onText(/\/sendMessage/, async (msg) => {
+  try {
+    const chatId = msg.chat.id
+    bot.sendMessage(chatId, 'OK. Send me a password and content. Please use this format:\n\nPWD - XXX123 - content')
+  } catch (error) {
+    bot_logger().error(`checkin Error: ${error}`)
+  }
+})
+
 bot.on('message', async (msg) => {
   try {
     const chatId = msg.chat.id;
     const text = msg.text;
-    const isFeedBack = await cache.get(`${chatId}feedBack`)
-    if (isFeedBack == 1 && text.length > 10) {
+    const textArray = text.split(' - ')
+    const cmd = textArray[0]
+    if (cmd == 'FAQ') {
       const score = await operation.user_feedBack(msg)
-      const tks = 'https://img2.baidu.com/it/u=3173117747,3631691921&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=282'
       const replyMarkup = {
         caption: `Thank you for your feedback, we will continue to improve!！\nOnce adopted, we will gift it to you ${score} Pts!`,
         reply_markup: {
@@ -343,7 +352,23 @@ bot.on('message', async (msg) => {
           ]
         }
       };
-      bot.sendPhoto(chatId, tks, replyMarkup);
+      bot.sendMessage(chatId, replyMarkup.caption, replyMarkup);
+    } else if (cmd == 'PWD') {
+      try {
+        const pwd = textArray[1]
+        const content = textArray[2]
+        if (pwd !== 'abc123456') {
+          bot.sendMessage(chatId, 'Password incorrect')
+          return
+        }
+        const allUser = await operation.get_all_user(msg)
+        allUser.forEach(item => {
+          bot.sendMessage(item, content)
+        })
+      } catch (error) {
+        bot_logger().error('PWD error:', `${error}`)
+        bot.sendMessage(chatId, 'OK. Send me a password and content. Please use this format:\n\nPWD - XXX123 - content')
+      }
     }
   } catch (error) {
     bot_logger().error(`message Error: ${error}`)
