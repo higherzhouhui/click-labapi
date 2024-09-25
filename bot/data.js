@@ -212,16 +212,18 @@ async function get_scripts(sendData) {
   return scripts
 }
 
-async function get_script_detail(sendData, id) {
+async function get_script_detail(sendData, cId) {
   const data = handleSendData(sendData)
   operation_log(data)
+  let id = cId
   let scripts;
   await dataBase.sequelize.transaction(async (t) => {
     try {
       if (!id) {
         const _script = await Model.Script.findOne({
-          order: [['created', 'desc']]
+          order: [['createdAt', 'desc']]
         })
+        id = _script.dataValues.id
         scripts = _script.dataValues
       } else {
         scripts = await Model.Script.findByPk(id)

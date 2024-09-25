@@ -279,6 +279,7 @@ bot.onText(/\/feedback/, async (msg) => {
 
 bot.onText(/\/latest/, async (msg) => {
   try {
+    const chatId = msg.chat.id
     const detail = await operation.get_script_detail(msg)
     const userInfo = await operation.get_userInfo(msg)
     const logo = detail.logo
@@ -295,7 +296,7 @@ bot.onText(/\/latest/, async (msg) => {
           [
             {
               text: 'Continue',
-              callback_data: `beginScript-${script_id}`
+              callback_data: `beginScript-${detail.script_id}`
             },
             {
               text: "Return",
