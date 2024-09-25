@@ -279,7 +279,7 @@ bot.onText(/\/feedback/, async (msg) => {
 
 bot.onText(/\/latest/, async (msg) => {
   try {
-    const detail = await operation.get_script_detail(msg, script_id)
+    const detail = await operation.get_script_detail(msg)
     const userInfo = await operation.get_userInfo(callbackQuery)
     const logo = detail.logo
     let caption = `You've selected the script: ${detail.name}\n\nYou currently have ${userInfo.ticket} story limits.\nStarting this script will use ${detail.config.choose_jb} story limit.\nDo you want to continue?`
