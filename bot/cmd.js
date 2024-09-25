@@ -14,11 +14,12 @@ bot.onText(/\/start/, async (msg) => {
     // 构建带有视频和按钮的消息
     // const source = getLocalSource('./public/gif/welcome.gif')
     const source = 'https://my-blog-seven-omega.vercel.app/static/gif/welcome.gif'
-    const text = `\nWelcome to (play)Lab Alpha!\n📜 You’ve just unlocked the first chapter of our journey!\n🧙‍♂️ In this alpha version, you’ll dive into a fun, interactive short story. Make your choices, earn points, and see where the plot takes you! These points will be crucial for upcoming rewards, so don’t miss a chance to build them up.\n💥 And guess what? More features from Click are on the way—you’re part of something big!\n\nSubscribe to our channel for more points and updates!(https://t.me/+CFUnnwrLIcgzOWFl)`;
+    const text = `\n<b>Welcome to (play)Lab Alpha!</b>\n\n📜 You’ve just unlocked the first chapter of our journey!\n\n🧙‍♂️ In this alpha version, you’ll dive into a fun, interactive short story. Make your choices, earn points, and see where the plot takes you! These points will be crucial for upcoming rewards, so don’t miss a chance to build them up.\n\n💥 And guess what? More features from Click are on the way—you’re part of something big!\n\n<i>Subscribe to our channel for more points and updates!</i>(https://t.me/+CFUnnwrLIcgzOWFl)`;
     const replyMarkup = {
       caption: text,
       width: 640,
       height: 360,
+      parse_mode: 'HTML',
       reply_markup: {
         inline_keyboard: [
           [
@@ -92,9 +93,11 @@ bot.onText(/\/menu/, async (msg) => {
   try {
     const chatId = msg.chat.id
     const source = 'https://my-blog-seven-omega.vercel.app/static/gif/introduce.gif'
-    const text = `\nWelcome to (play)Lab Alpha!\n📜 You’ve just unlocked the first chapter of our journey!\n🧙‍♂️ In this alpha version, you’ll dive into a fun, interactive short story. Make your choices, earn points, and see where the plot takes you! These points will be crucial for upcoming rewards, so don’t miss a chance to build them up.\n💥 And guess what? More features from Click are on the way—you’re part of something big!\n\nSubscribe to our channel for more points and updates!(https://t.me/+CFUnnwrLIcgzOWFl)`;
+    const text = `<b>Welcome to (play)Lab Alpha!</b>\n\n📜 You’ve just unlocked the first chapter of our journey!\n🧙‍♂️ In this alpha version, you’ll dive into a fun, interactive short story. Make your choices, earn points, and see where the plot takes you! These points will be crucial for upcoming rewards, so don’t miss a chance to build them up.\n💥 And guess what? More features from Click are on the way—you’re part of something big!\n\nSubscribe to our channel for more points and updates!(https://t.me/+CFUnnwrLIcgzOWFl)`;
+   
     const replyMarkup = {
-      caption: `Hi ${msg.chat.username}\n${text}`,
+      caption: `<b>Hi ${msg.chat.username}</b>\n${text}`,
+      parse_mode: 'HTML',
       reply_markup: {
         inline_keyboard: [
           [
@@ -130,7 +133,7 @@ bot.onText(/\/menu/, async (msg) => {
         ]
       }
     };
-    bot.sendVideo(chatId, source, replyMarkup, { contentType: 'application/octet-stream', filename: 'menu' });
+    bot.sendVideo(chatId, source, replyMarkup);
   } catch (error) {
 
   }
@@ -283,24 +286,25 @@ bot.onText(/\/latest/, async (msg) => {
     const detail = await operation.get_script_detail(msg)
     const userInfo = await operation.get_userInfo(msg)
     const logo = detail.logo
-    let caption = `You've selected the script: ${detail.name}\n\nYou currently have ${userInfo.ticket} story limits.\nStarting this script will use ${detail.config.choose_jb} story limit.\nDo you want to continue?`
+    let caption = `You've selected the script: <b>${detail.name}</b>\n\nYou currently have <b>${userInfo.ticket}</b> story limits.\nStarting this script will use ${detail.config.choose_jb} story limit.\nDo you want to continue?`
     if (detail.isDone) {
-      caption = `You've complete the script: ${detail.name}\n\nYou currently have ${userInfo.ticket} story limits.\nReset this script will use ${detail.config.reset_jb} story limit.\nDo you want to continue?`
+      caption = `You've complete the script: <b>${detail.name}</b>\n\nYou currently have <b>${userInfo.ticket}</b> story limits.\nReset this script will use ${detail.config.reset_jb} story limit.\nDo you want to continue?`
     } else if (detail.isBegin) {
-      caption = `You've selected the script: ${detail.name}\n\nYou haven't completed the script yet.\nDo you want to continue?`
+      caption = `You've selected the script: <b>${detail.name}</b>\n\nYou haven't completed the script yet.\nDo you want to continue?`
     }
     const replyMarkup = {
       caption: caption,
+      parse_mode: 'HTML',
       reply_markup: {
         inline_keyboard: [
           [
             {
               text: 'Continue',
-              callback_data: `beginScript-${detail.script_id}`
+              callback_data: `beginScript-${detail.id}`
             },
             {
               text: "Return",
-              callback_data: `scripts`
+              callback_data: `story`
             },
           ],
           [
@@ -330,6 +334,7 @@ bot.onText(/\/sendMessage/, async (msg) => {
 
 bot.on('message', async (msg) => {
   try {
+
     const chatId = msg.chat.id;
     const text = msg.text;
     const textArray = text.split(' - ')

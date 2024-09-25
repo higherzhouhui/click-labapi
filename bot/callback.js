@@ -191,14 +191,15 @@ bot.on('callback_query', async (callbackQuery) => {
       const detail = await operation.get_script_detail(callbackQuery, script_id)
       const userInfo = await operation.get_userInfo(callbackQuery)
       const logo = detail.logo
-      let caption = `You've selected the story: ${detail.name}\n\nYou currently have ${userInfo.ticket} story limits.\nStarting this story will use ${detail.config.choose_jb} story limit.\nDo you want to continue?`
+      let caption = `You've selected the script: <b>${detail.name}</b>\n\nYou currently have <b>${userInfo.ticket}</b> story limits.\nStarting this script will use ${detail.config.choose_jb} story limit.\nDo you want to continue?`
       if (detail.isDone) {
-        caption = `You've complete the story: ${detail.name}\n\nYou currently have ${userInfo.ticket} story limits.\nReset this story will use ${detail.config.reset_jb} story limit.\nDo you want to continue?`
+        caption = `You've complete the script: <b>${detail.name}</b>\n\nYou currently have <b>${userInfo.ticket}</b> story limits.\nReset this script will use ${detail.config.reset_jb} story limit.\nDo you want to continue?`
       } else if (detail.isBegin) {
-        caption = `You've selected the story: ${detail.name}\n\nYou haven't completed the story yet.\nDo you want to continue?`
+        caption = `You've selected the script: <b>${detail.name}</b>\n\nYou haven't completed the script yet.\nDo you want to continue?`
       }
       const replyMarkup = {
         caption: caption,
+        parse_mode: 'HTML',
         reply_markup: {
           inline_keyboard: [
             [
@@ -420,14 +421,15 @@ bot.on('callback_query', async (callbackQuery) => {
       const detail = await operation.get_script_detail(callbackQuery, script_id)
       const userInfo = await operation.get_userInfo(callbackQuery)
       const logo = detail.logo
-      let caption = `You've selected the script: ${detail.name}\n\nYou currently have ${userInfo.ticket} story limits.\nStarting this script will use ${detail.config.choose_jb} story limit.\nDo you want to continue?`
+      let caption = `You've selected the script: <b>${detail.name}</b>\n\nYou currently have <b>${userInfo.ticket}</b> story limits.\nStarting this script will use ${detail.config.choose_jb} story limit.\nDo you want to continue?`
       if (detail.isDone) {
-        caption = `You've complete the script: ${detail.name}\n\nYou currently have ${userInfo.ticket} story limits.\nReset this script will use ${detail.config.reset_jb} story limit.\nDo you want to continue?`
+        caption = `You've complete the script: <b>${detail.name}</b>\n\nYou currently have <b>${userInfo.ticket}</b> story limits.\nReset this script will use ${detail.config.reset_jb} story limit.\nDo you want to continue?`
       } else if (detail.isBegin) {
-        caption = `You've selected the script: ${detail.name}\n\nYou haven't completed the script yet.\nDo you want to continue?`
+        caption = `You've selected the script: <b>${detail.name}</b>\n\nYou haven't completed the script yet.\nDo you want to continue?`
       }
       const replyMarkup = {
         caption: caption,
+        parse_mode: 'HTML',
         reply_markup: {
           inline_keyboard: [
             [

@@ -249,7 +249,7 @@ async function get_script_detail(sendData, cId) {
       }
     } catch (error) {
       console.error(error)
-      bot_logger().error(`demo Error: ${error}`)
+      bot_logger().error(`get_script_detail Error: ${error}`)
     }
   })
   return scripts
