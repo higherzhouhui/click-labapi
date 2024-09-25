@@ -22,7 +22,8 @@ bot.on('callback_query', async (callbackQuery) => {
       //   await operation.set_language(chatId, _lang)
       //   caption = await getMessage(chatId, 'lang_caption')
       // }
-      const source = getLocalSource('./public/gif/introduce.gif')
+      // const source = getLocalSource('./public/gif/introduce.gif')
+      const source = 'https://my-blog-seven-omega.vercel.app/static/gif/introduce.gif'
       const replyMarkup = {
         caption: '',
         reply_markup: {
@@ -159,14 +160,15 @@ bot.on('callback_query', async (callbackQuery) => {
         bot.sendMessage(chatId, 'please exec start command')
       }
     } else if (data == 'story') {
-      const source = getLocalSource('./public/pic/redroom.png');
+      // const source = getLocalSource('./public/pic/redroom.png');
+      const source = 'https://my-blog-seven-omega.vercel.app/static/pic/redroom.png'
       const list = await operation.get_scripts(callbackQuery)
       const inline_keyboard = []
       list.forEach(item => {
         inline_keyboard.push([
           {
             text: item.name,
-            callback_data: `scripts-${item.id}`
+            callback_data: `story-${item.id}`
           }
         ])
       })
@@ -224,7 +226,7 @@ bot.on('callback_query', async (callbackQuery) => {
       const result = await operation.get_script_option(callbackQuery, script_id)
 
       if (result) {
-        const source = getLocalSource(`./public/gif/${result.source}.gif`)
+        const source = `https://my-blog-seven-omega.vercel.app/static/gif/${result.source}.gif`
         const list = result.list
         const inline_keyboard = []
         let caption = `${result.title}\n\n${result.text}\n\nYou decide:\n`
@@ -255,7 +257,9 @@ bot.on('callback_query', async (callbackQuery) => {
 
       const result = await operation.choose_option(callbackQuery, option_id)
       if (result.code == 0 || result.code == 400) {
-        const imageUrl = getLocalSource(`./public/gif/${result.data.source}.gif`)
+        // const imageUrl = getLocalSource(`./public/gif/${result.data.source}.gif`)
+        const imageUrl = `https://my-blog-seven-omega.vercel.app/static/gif/${result.data.source}.gif`
+        
         const list = result.data.list
         const inline_keyboard = []
         let caption = `${result.data.title}\n\n${result.data.text}\n\n`
@@ -340,7 +344,8 @@ bot.on('callback_query', async (callbackQuery) => {
       //   }
       // };
       // bot.sendPhoto(chatId, imageUrl, replyMarkup)
-      const source = getLocalSource('./public/gif/welcome.gif')
+      // const source = getLocalSource('./public/gif/welcome.gif')
+      const source = 'https://my-blog-seven-omega.vercel.app/static/gif/welcome.gif'
       const text = `\nWelcome to (play)Lab Alpha!\n📜 You’ve just unlocked the first chapter of our journey!\n🧙‍♂️ In this alpha version, you’ll dive into a fun, interactive short story. Make your choices, earn points, and see where the plot takes you! These points will be crucial for upcoming rewards, so don’t miss a chance to build them up.\n💥 And guess what? More features from Click are on the way—you’re part of something big!\n\nSubscribe to our channel for more points and updates!(https://t.me/+CFUnnwrLIcgzOWFl)`;
       const replyMarkup = {
         caption: text,

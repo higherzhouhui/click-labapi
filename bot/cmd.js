@@ -12,7 +12,8 @@ bot.onText(/\/start/, async (msg) => {
   try {
     await operation.create_user(msg)
     // 构建带有视频和按钮的消息
-    const source = getLocalSource('./public/gif/welcome.gif')
+    // const source = getLocalSource('./public/gif/welcome.gif')
+    const source = 'https://my-blog-seven-omega.vercel.app/static/gif/welcome.gif'
     const text = `\nWelcome to (play)Lab Alpha!\n📜 You’ve just unlocked the first chapter of our journey!\n🧙‍♂️ In this alpha version, you’ll dive into a fun, interactive short story. Make your choices, earn points, and see where the plot takes you! These points will be crucial for upcoming rewards, so don’t miss a chance to build them up.\n💥 And guess what? More features from Click are on the way—you’re part of something big!\n\nSubscribe to our channel for more points and updates!(https://t.me/+CFUnnwrLIcgzOWFl)`;
     const replyMarkup = {
       caption: text,
@@ -23,7 +24,7 @@ bot.onText(/\/start/, async (msg) => {
           [
             {
               text: "Start Your Story",
-              callback_data: 'scripts',
+              callback_data: 'story',
             },
           ],
           [
@@ -90,7 +91,7 @@ bot.onText(/\/start/, async (msg) => {
 bot.onText(/\/menu/, async (msg) => {
   try {
     const chatId = msg.chat.id
-    const source = getLocalSource('./public/gif/introduce.gif')
+    const source = 'https://my-blog-seven-omega.vercel.app/static/gif/introduce.gif'
     const text = `\nWelcome to (play)Lab Alpha!\n📜 You’ve just unlocked the first chapter of our journey!\n🧙‍♂️ In this alpha version, you’ll dive into a fun, interactive short story. Make your choices, earn points, and see where the plot takes you! These points will be crucial for upcoming rewards, so don’t miss a chance to build them up.\n💥 And guess what? More features from Click are on the way—you’re part of something big!\n\nSubscribe to our channel for more points and updates!(https://t.me/+CFUnnwrLIcgzOWFl)`;
     const replyMarkup = {
       caption: `Hi ${msg.chat.username}\n${text}`,
@@ -140,14 +141,15 @@ bot.onText(/\/menu/, async (msg) => {
 bot.onText(/\/story/, async (msg) => {
   try {
     const chatId = msg.chat.id
-    const source = getLocalSource('./public/pic/redroom.png');
+    // const source = getLocalSource('./public/pic/redroom.png');
+    const source = 'https://my-blog-seven-omega.vercel.app/static/pic/redroom.png'
     const list = await operation.get_scripts(msg)
     const inline_keyboard = []
     list.forEach(item => {
       inline_keyboard.push([
         {
           text: item.name,
-          callback_data: `scripts-${item.id}`
+          callback_data: `story-${item.id}`
         }
       ])
     })

@@ -80,7 +80,7 @@ const ScriptDetail = db.sequelize.define(
     source: { type: DataTypes.STRING },
     title: { type: DataTypes.STRING },
     key: { type: DataTypes.STRING },
-    text: { type: DataTypes.STRING },
+    text: { type:  DataTypes.STRING(3000) },
     sort: { type: DataTypes.INTEGER },
     script_id: { type: DataTypes.INTEGER },
     shortOver: { type: DataTypes.BOOLEAN, defaultValue: false },
