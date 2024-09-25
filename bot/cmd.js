@@ -1,7 +1,7 @@
 const { bot, bot_logger } = require('./index')
 const operation = require('./data');
 const { cache } = require('../model/database');
-const utils = require('./utils')
+const { getMessage, getLocalSource } = require('./utils');
 
 // 图片的URL
 const imageUrl = 'https://img0.baidu.com/it/u=739050917,3625217136&fm=253&fmt=auto&app=138&f=JPEG?w=800&h=800';
@@ -12,7 +12,7 @@ bot.onText(/\/start/, async (msg) => {
   try {
     await operation.create_user(msg)
     // 构建带有视频和按钮的消息
-    const source = utils.getLocalSource('./public/gif/welcome.gif')
+    const source = getLocalSource('./public/gif/welcome.gif')
     const text = `\nWelcome to (play)Lab Alpha!\n📜 You’ve just unlocked the first chapter of our journey!\n🧙‍♂️ In this alpha version, you’ll dive into a fun, interactive short story. Make your choices, earn points, and see where the plot takes you! These points will be crucial for upcoming rewards, so don’t miss a chance to build them up.\n💥 And guess what? More features from Click are on the way—you’re part of something big!\n\nSubscribe to our channel for more points and updates!(https://t.me/+CFUnnwrLIcgzOWFl)`;
     const replyMarkup = {
       caption: text,
@@ -25,14 +25,36 @@ bot.onText(/\/start/, async (msg) => {
               text: "Start Your Story",
               callback_data: 'scripts',
             },
+          ],
+          [
             {
               text: "Invite for Points",
               callback_data: 'share_link',
             },
+          ],
+          [
             {
               text: "Follow Our X (+1 Story Limit)",
               url: 'https://x.com/binance',
             },
+          ],
+          [
+            {
+              text: "Subscribe (+1 Story Limit)",
+              url: 'https://t.me/+CFUnnwrLIcgzOWFl',
+            }
+          ],
+          [
+            {
+              text: "Join Our Group (+1 Story Limit)",
+              url: 'https://t.me/+CFUnnwrLIcgzOWFl',
+            }
+          ],
+          [
+            {
+              text: "FAQ",
+              callback_data: 'feedBack',
+            }
           ],
           // [
           //   {
@@ -58,7 +80,7 @@ bot.onText(/\/start/, async (msg) => {
       }
     };
 
-    bot.sendVideo(chatId, source, replyMarkup, {contentType: 'application/octet-stream', filename: 'welcome'});
+    bot.sendVideo(chatId, source, replyMarkup, { contentType: 'application/octet-stream', filename: 'welcome' });
   } catch (error) {
     bot_logger().error(`${chatId} start error: ${error}`)
   }
@@ -68,45 +90,46 @@ bot.onText(/\/start/, async (msg) => {
 bot.onText(/\/menu/, async (msg) => {
   try {
     const chatId = msg.chat.id
-    // 构建带有图片和按钮的消息
+    const source = getLocalSource('./public/gif/introduce.gif')
+    const text = `\nWelcome to (play)Lab Alpha!\n📜 You’ve just unlocked the first chapter of our journey!\n🧙‍♂️ In this alpha version, you’ll dive into a fun, interactive short story. Make your choices, earn points, and see where the plot takes you! These points will be crucial for upcoming rewards, so don’t miss a chance to build them up.\n💥 And guess what? More features from Click are on the way—you’re part of something big!\n\nSubscribe to our channel for more points and updates!(https://t.me/+CFUnnwrLIcgzOWFl)`;
     const replyMarkup = {
-      caption: '文本1\n文本2',
+      caption: `Hi ${msg.chat.username}\n${text}`,
       reply_markup: {
         inline_keyboard: [
           [
             {
-              text: "剧本",
-              callback_data: "scripts"
+              text: "Story",
+              callback_data: "story"
             },
           ],
           [
             {
-              text: "任务",
-              callback_data: "all-task"
+              text: "Task",
+              callback_data: "tasks"
             }
           ],
           [
             {
-              text: "个人信息",
+              text: "User",
               callback_data: "userInfo"
             },
           ],
           [
             {
-              text: "签到",
+              text: "CheckIn",
               callback_data: "checkIn"
             },
           ],
           [
             {
-              text: "反馈",
+              text: "FAQ",
               callback_data: "feedBack"
             },
           ],
         ]
       }
     };
-    bot.sendPhoto(chatId, imageUrl, replyMarkup);
+    bot.sendVideo(chatId, source, replyMarkup, { contentType: 'application/octet-stream', filename: 'menu' });
   } catch (error) {
 
   }
@@ -114,10 +137,10 @@ bot.onText(/\/menu/, async (msg) => {
 
 
 
-bot.onText(/\/scripts/, async (msg) => {
+bot.onText(/\/story/, async (msg) => {
   try {
     const chatId = msg.chat.id
-    const imageUrl = 'https://img2.baidu.com/it/u=2429226539,3429519924&fm=253&fmt=auto&app=120&f=JPEG?w=829&h=500';
+    const source = getLocalSource('./public/pic/redroom.png');
     const list = await operation.get_scripts(msg)
     const inline_keyboard = []
     list.forEach(item => {
@@ -130,18 +153,18 @@ bot.onText(/\/scripts/, async (msg) => {
     })
     inline_keyboard.push([
       {
-        text: '返回',
+        text: 'Return',
         callback_data: 'menu'
       }
     ])
     // 构建带有图片和按钮的消息
     const replyMarkup = {
-      caption: '文本1\n文本2',
+      caption: '',
       reply_markup: {
         inline_keyboard: inline_keyboard
       }
     };
-    bot.sendPhoto(chatId, imageUrl, replyMarkup);
+    bot.sendPhoto(chatId, source, replyMarkup);
   } catch (error) {
 
   }
@@ -163,18 +186,18 @@ bot.onText(/\/tasks/, async (msg) => {
       ])
       inline_keyboard.push([
         {
-          text: '检查',
+          text: 'Check',
           callback_data: `check-${item.id}`
         },
         {
-          text: '领取',
+          text: 'Claim',
           callback_data: `claim-${item.id}`
         }
       ])
     })
     inline_keyboard.push([
       {
-        text: "返回",
+        text: "Return",
         callback_data: `menu`
       },
     ])
@@ -193,29 +216,28 @@ bot.onText(/\/tasks/, async (msg) => {
 bot.onText(/\/checkin/, async (msg) => {
   try {
     const chatId = msg.chat.id
-    const singObj = await operation.user_checkIn(msg)
-    if (singObj) {
-      const logo = 'https://img0.baidu.com/it/u=3343907092,2842815082&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=889'
+    const signObj = await operation.user_checkIn(msg)
+    if (signObj) {
+      const caption = `CheckIn successful\n\n+${signObj.ticket} limit ${signObj.score > 0 ? `+${signObj.score} Pts` : ''}   Day: ${signObj.day}\n\nCheckIn for 7 consecutive days and receive a great gift!\nInterrupt check-in and recalculate days\nCheck in available at 00:00 (UTC+0) every day`
       const replyMarkup = {
-        caption: `签到成功，获得${singObj.score}积分,第${singObj.day}天\n连续签到7天更有大礼！\n中断签到重新计算天数\n每天00:00(UTC+0)可签到`,
+        caption: caption,
         reply_markup: {
           inline_keyboard: [
             [
               {
-                text: "返回",
+                text: "Return",
                 callback_data: `menu`
               },
             ],
           ]
         }
       };
-      bot.sendPhoto(chatId, logo, replyMarkup)
-
+      bot.sendMessage(chatId, caption, replyMarkup)
     } else {
-      bot.sendMessage(chatId, '网络异常，请稍后重试')
+      bot.sendMessage(chatId, 'please exec start command')
     }
   } catch (error) {
-
+    bot_logger().error(`checkin Error: ${error}`)
   }
 })
 
@@ -224,24 +246,23 @@ bot.onText(/\/user/, async (msg) => {
   try {
     const chatId = msg.chat.id
     const userInfo = await operation.get_userInfo(msg)
-    const avatar = 'https://img0.baidu.com/it/u=3348785934,3249339235&fm=253&fmt=auto&app=138&f=PNG?w=100&h=100'
     const config = await operation.get_config()
     const replyMarkup = {
-      caption: `我的积分: ${userInfo.score}\n邀请好友: ${userInfo.count}\n邀请得分: ${userInfo.invite_friends_score || 0}\n邀请链接: ${config.bot_url}?start=${btoa(chatId)}`,
+      caption: `${userInfo.username}\n\nScore: ${userInfo.score} Pts\nStory Limit: ${userInfo.ticket}\nComplete Story Times: ${userInfo.complete}\nFriends: ${userInfo.count}\nInvite Link: ${config.bot_url}?start=${btoa(chatId)}`,
       reply_markup: {
         inline_keyboard: [
           [
             {
-              text: "返回",
+              text: "Return",
               callback_data: 'menu'
             },
           ],
         ]
       }
     };
-    bot.sendPhoto(chatId, avatar, replyMarkup);
+    bot.sendMessage(chatId, replyMarkup.caption, replyMarkup);
   } catch (error) {
-
+    bot_logger().error(`user Error: ${error}`)
   }
 })
 
@@ -251,7 +272,47 @@ bot.onText(/\/feedback/, async (msg) => {
     bot.sendMessage(chatId, '请输入反馈内容：')
     cache.set(`${chatId}feedBack`, 1)
   } catch (error) {
+    bot_logger().error(`feedback Error: ${error}`)
+  }
+})
 
+bot.onText(/\/latest/, async (msg) => {
+  try {
+    const detail = await operation.get_script_detail(msg, script_id)
+    const userInfo = await operation.get_userInfo(callbackQuery)
+    const logo = detail.logo
+    let caption = `You've selected the script: ${detail.name}\n\nYou currently have ${userInfo.ticket} story limits.\nStarting this script will use ${detail.config.choose_jb} story limit.\nDo you want to continue?`
+    if (detail.isDone) {
+      caption = `You've complete the script: ${detail.name}\n\nYou currently have ${userInfo.ticket} story limits.\nReset this script will use ${detail.config.reset_jb} story limit.\nDo you want to continue?`
+    } else if (detail.isBegin) {
+      caption = `You've selected the script: ${detail.name}\n\nYou haven't completed the script yet.\nDo you want to continue?`
+    }
+    const replyMarkup = {
+      caption: caption,
+      reply_markup: {
+        inline_keyboard: [
+          [
+            {
+              text: 'Continue',
+              callback_data: `beginScript-${script_id}`
+            },
+            {
+              text: "Return",
+              callback_data: `scripts`
+            },
+          ],
+          [
+            {
+              text: 'Need More Limits?',
+              callback_data: `tasks`
+            },
+          ]
+        ]
+      }
+    };
+    bot.sendPhoto(chatId, logo, replyMarkup)
+  } catch (error) {
+    bot_logger().error(`latest Error: ${error}`)
   }
 })
 
@@ -264,18 +325,18 @@ bot.on('message', async (msg) => {
       const score = await operation.user_feedBack(msg)
       const tks = 'https://img2.baidu.com/it/u=3173117747,3631691921&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=282'
       const replyMarkup = {
-        caption: `感谢您的反馈，我们将继续提升！\n一经采纳我们将赠与您${score}积分!`,
+        caption: `Thank you for your feedback, we will continue to improve!！\nOnce adopted, we will gift it to you ${score} Pts!`,
         reply_markup: {
           inline_keyboard: [
             [
               {
-                text: "继续反馈",
+                text: "Continue",
                 callback_data: "feedBack"
               },
             ],
             [
               {
-                text: "返回",
+                text: "Return",
                 callback_data: `menu`
               },
             ]
@@ -285,6 +346,6 @@ bot.on('message', async (msg) => {
       bot.sendPhoto(chatId, tks, replyMarkup);
     }
   } catch (error) {
-
+    bot_logger().error(`message Error: ${error}`)
   }
 })

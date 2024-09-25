@@ -53,59 +53,268 @@ async function init_scripts() {
   try {
     const scripts = [
       {
-        name: '遗忘之室',
-        logo: 'https://img1.gamedog.cn/2023/12/12/2413736-2312121605070.jpg',
-        bg: `故事背景：\n在一个被遗忘的古老图书馆深处，隐藏着一间神秘的密室。传说，这间密室是古代学者为了保护其最珍贵的知识而建造的，只有最聪明和勇敢的人才能解开密室的秘密，逃离这个被时间遗忘的地方。`,
-        intro: `剧情简介：\n玩家扮演一名探险家，意外地在探索图书馆时发现了一扇隐藏的门。门后是一间装饰古朴、书架林立的密室。房间中央有一张桌子，上面放着一本破旧的日记和一些奇异的符号。日记中记载着密室的建造者留下的线索，以及一个挑战：解开密室中的谜题，找到出口。`,
+        name: 'Red Room',
+        logo: './public/pic/redroom.png',
+        bg: ``,
+        intro: ``,
         detail: [
           {
-            pic: 'https://img1.baidu.com/it/u=10553331,2745495550&fm=253&fmt=auto&app=120&f=JPEG?w=665&h=380',
-            text: '请问你有玩过密室逃脱吗？',
+            source: 'redroom',
+            title: '序章\n神秘的邀請',
+            text: `你的父親失踪已久。你和艾琳娜是多年好友，最近她的妹妹也神秘失踪，這一連串的神秘事件一直困擾著你們。某天晚上，你和艾琳娜一起在公寓裡，你的手機突然收到一個神秘鏈接，打開後是一個直播間，直播間的標題是「紅房子」，下方有一個Enter的選項。`,
             options: [
               {
-                label: '有',
+                label: `A：接受邀請，進入直播。`,
+                value: '1A',
               },
               {
-                label: '没有',
+                label: `B：拒絕邀請，認為這是陷阱。`,
+                value: '1B',
               },
             ]
           },
           {
-            pic: 'https://img0.baidu.com/it/u=2171337979,1721743467&fm=253&fmt=auto&app=120&f=JPEG?w=522&h=221',
-            text: '一个古老图书馆的内部，中央有一扇半隐在书架后的神秘门。门上雕刻着复杂的符号和图案，暗示着密室的存在\n如果深陷密室中，请问你会选择什么工具',
+            source: '1-1',
+            title: '第一章\n進入紅房子',
+            text: `你和艾琳娜進入了直播，畫面顯示一名女子被綁在由像是巨大的怪物的組織和器官構成的的房間內，與其說是由怪物的身體組織或器官構成的房間，不如說是怪物的體內！直播間裡還有其他觀眾起哄決定對這位女子的行刑方式。\n艾琳娜（急切）：「這……好像是我的妹妹！」`,
+            key: '1A',
             options: [
               {
-                label: '蜡烛',
+                label: `A：嘗試阻止直播。`,
+                value: '2A',
               },
               {
-                label: '铁锹',
-              },
-              {
-                label: '斧头',
-              },
-              {
-                label: '棍子',
+                label: `B：說服艾琳娜先觀察以找到更多線索再想辦法解救她的妹妹。`,
+                value: '2A',
               },
             ]
           },
           {
-            pic: 'https://i2.hdslb.com/bfs/archive/779c577e2616778fdd2b3a26df4fe9f03dae5da8.jpg',
-            text: '经过长时间在密闭环境中，出来后你第一件事是做什么？',
+            source: '1-2',
+            title: '第一章\n怪事連連',
+            text: `你們選擇拒絕進入紅房子，這時你們感覺今天的氣氛出奇的安靜。你們往窗外望去，整個城市都泛著紅光，準確地說，整個城市像被一個巨大的不知名的紅色物體吞噬了。你們望向門口，似乎也冒著和那個直播間的封面一樣的紅光……`,
+            key: '1B',
             options: [
               {
-                label: '喝水',
+                label: `A：帶上艾琳娜逃離家中。`,
+                value: '2C',
+              },
+              {
+                label: `B：決定再次查看那個奇怪的邀請。`,
+                value: '2D',
+              },
+            ]
+          },
+          {
+            source: '2-1',
+            title: '第二章\n無法阻止的直播',
+            text: `你們嘗試在聊天室裡請求其他觀眾不要傷害艾琳娜的妹妹，可觀眾看到竟然會有人在這個聊天室裡請求他們不要做變態的事情反而更興奮了。這時，一道紅光閃過，你們竟然被吸進了和直播間的場景一樣的地方。\n艾琳娜（驚恐）：「發生了什麼？………」\n你：「這個地方……不……這個東西，像是有生命一樣……」`,
+            key: '2A',
+            options: [
+              {
+                label: `A：和艾琳娜尋找逃跑的方法。`,
+                value: '3A',
+              },
+              {
+                label: `B：你們認為這裡應該就是艾琳娜的妹妹被綁架的地方，試圖深入探索這裡，解救艾琳娜的妹妹。`,
+                value: '3B',
+              },
+            ]
+          },
+          {
+            source: '2-1',
+            title: '第二章\n我在哪裡',
+            text: `艾琳娜強忍著難過的心情和你一起觀看直播。這時，一道紅光閃過，你們竟然被吸進了和直播間的場景一樣的地方。\n艾琳娜：「這個地方像不像我妹妹被綁架的地方？」`,
+            key: '2B',
+            options: [
+              {
+                label: `A：和艾琳娜尋找逃跑的方法。`,
+                value: '3A',
+              },
+              {
+                label: `B：你們認為這裡應該就是艾琳娜的妹妹被綁架的地方，試圖深入探索這裡，解救艾琳娜的妹妹。`,
+                value: '3B',
+              },
+            ]
+          },
+          {
+            source: '2-2',
+            title: '第二章\n耀眼的紅光',
+            text: `你和艾琳娜趕緊逃出了家門，可是一切都來不及了，紅光離你們越來越近，直到你們被吞噬。這個紅光裡似乎有很多張扭曲的面孔，在你失去意識之前，你似乎看見了……你失蹤已久的父親，他的面孔不像是其他的面孔驚恐猙獰，他彷彿在笑……\n你：「父親？」`,
+            key: '2C',
+            shortOver: true,
+            options: [
+              {
+                label: `A：結束劇本。`,
+                value: 'over',
+              },
+              {
+                label: `B：重新開始。`,
+                value: 'restart',
+              },
+            ]
+          },
+          {
+            source: '1-1',
+            title: '第二章\n進入紅房子',
+            text: `你重新打開了那個鏈接，進入了那個直播間。畫面顯示一名女子被綁在由像是巨大的怪物的組織和器官構成的的房間內，與其說是由怪物的身體組織或器官構成的房間，不如說是怪物的體內！直播間裡還有其他觀眾起哄決定對這位女子的行刑方式。\n艾琳娜：「這個女人，好像我的妹妹！」`,
+            key: '2D',
+            options: [
+              {
+                label: `A：嘗試阻止直播。`,
+                value: '2A',
+              },
+              {
+                label: `B：說服艾琳娜先觀察以找到更多線索再想辦法解救她的妹妹。`,
+                value: '2A',
+              },
+            ]
+          },
+          {
+            source: '2-2',
+            title: '第三章\n血肉的牢籠',
+            text: `你們嘗試逃跑，可這個地方像是沒有邊界一般。你們已經精疲力盡了。這時你的耳邊似乎響起了父親的聲音……你心想難道父親也被困在了這裡嗎？最終你們累倒在了這裡，紅光離你們越來越近，這個紅光裡似乎有很多張扭曲的面孔，在你失去意識之前，你似乎看見了……你失蹤已久的父親，他的面孔不像是其他的面孔驚恐猙獰，他彷彿在笑……\n你：「父親？」`,
+            key: '3A',
+            shortOver: true,
+            options: [
+              {
+                label: `A：結束劇本。`,
+                value: 'over',
+              },
+              {
+                label: `B：重新開始。`,
+                value: 'restart',
+              },
+            ]
+          },
+          {
+            source: '3',
+            title: '第三章\n父親的秘密',
+            text: `你們試圖找到艾琳娜的妹妹，終於在一個角落裡發現了她的身影。與直播時所見到的不同的是，她的身體已經與這個紅房子融合在一起了。這時，你們都聽見了一陣聲音，是你父親的聲音！\n艾琳娜（驚恐）：「妹妹！」\n你：「爸爸！」`,
+            key: '3B',
+            options: [
+              {
+                label: `A：尋找父親。`,
+                value: '4A',
+              },
+              {
+                label: `B：先試圖解救艾琳娜的妹妹`,
+                value: '4B',
+              },
+            ]
+          },
+          {
+            source: '4',
+            title: '第四章\n怪物',
+            text: `你拼命吶喊著「爸爸」！這時你感覺到，一陣聲音從你的腳下傳來，充斥了整個空間。你驚訝地摔倒在了地上……\n父親：「不用找了，你們就站在我的身體上……」\n你：「爸爸！發生了什麼？」\n父親：「對不起，是我創造了這個怪物……一切都太遲了，紅房子吞噬了我，也會吞噬你們，別白費力氣了。但是……」\n父親繼續說道：「兒子，加入我吧，我們可以把整個世界都給吞噬掉！」`,
+            key: '4A',
+            options: [
+              {
+                label: `A：相信父親的話，與紅房子融合。`,
+                value: '5A',
+              },
+              {
+                label: `B：尋找機會殺死父親。`,
+                value: '5B',
+              },
+            ]
+          },
+          {
+            source: '4-1',
+            title: '第四章\n我該救誰',
+            text: `你們嘗試強行從牆壁裡把艾琳娜的妹妹救出來，紅房子似乎感受到了痛一般，發出了一聲聲的呻吟，這一聲聲的呻吟越聽越像你父親的聲音……\n紅房子：「兒子，兒子……」\n你：「爸爸？！發生了什麼？」\n父親：「別再從我的身體裡把她拉出來了，這樣我會死掉的！」`,
+            key: '4B',
+            options: [
+              {
+                label: `A：繼續試圖將艾琳娜的妹妹與紅房子分離。`,
+                value: '5C',
+              },
+              {
+                label: `B：相信父親的話，看著紅房子一點一點把艾琳娜的妹妹吞噬。`,
+                value: '5D',
+              },
+            ]
+          },
+          {
+            source: '5',
+            title: '第五章\n神秘的邀請',
+            text: `Michael的父親失踪已久。某天晚上，Michael的手機突然收到一個神秘鏈接，打開後是一個直播間，直播間的標題是「紅房子」，下方有一個Enter的選項……`,
+            key: '5A',
+            longOver: true,
+            options: [
+              {
+                label: `A：結束劇本。`,
+                value: 'over',
+              },
+              {
+                label: `B：重新開始。`,
+                value: 'restart',
+              },
+            ]
+          },
+          {
+            source: '5-1',
+            title: '第五章\n坍塌',
+            text: `你無法接受這一切。這時你注意到，這個紅房子的深處似乎有一個酷似心臟的東西在跳動。你走近那裡，拼盡全力往這顆巨大的心臟打著一拳又一拳。\n父親：「兒子，快停下來！」\n你的行為似乎有了反應，紅房子正在坍塌……`,
+            key: '5B',
+            longOver: true,
+            options: [
+              {
+                label: `A：結束劇本。`,
+                value: 'over',
+              },
+              {
+                label: `B：重新開始。`,
+                value: 'restart',
+              },
+            ]
+          },
+          {
+            source: '5-1',
+            title: '第五章\n毀滅',
+            text: `你沒有聽從父親的話，繼續嘗試強行從牆壁裡把艾琳娜的妹妹救出來。\n父親：「兒子，快停下來！」\n你們的努力似乎成功了？可是就在這時，眼前的一切變得模糊，你們看著紅房子一點一點在坍塌……`,
+            key: '5C',
+            longOver: true,
+            options: [
+              {
+                label: `A：結束劇本。`,
+                value: 'over',
+              },
+              {
+                label: `B：重新開始。`,
+                value: 'restart',
+              },
+            ]
+          },
+          {
+            source: '5-2',
+            title: '第五章\n傀儡',
+            text: `你彷彿被支配了一般，眼睜睜地看著艾琳娜的妹妹被紅房子吞噬……\n父親：「很好，我的兒子……」\n父親繼續說道：「現在輪到你了，艾琳娜……」`,
+            key: '5D',
+            longOver: true,
+            options: [
+              {
+                label: `A：結束劇本。`,
+                value: 'over',
+              },
+              {
+                label: `B：重新開始。`,
+                value: 'restart',
+              },
+            ]
+          },
+          {
+            source: '',
+            title: '',
+            text: ``,
+            key: 'T',
+            options: [
+              {
+                label: ``,
                 value: '',
               },
               {
-                label: '晒太阳',
-                value: '',
-              },
-              {
-                label: '睡觉',
-                value: '',
-              },
-              {
-                label: '去运动',
+                label: ``,
                 value: '',
               },
             ]
@@ -118,21 +327,23 @@ async function init_scripts() {
       const script_id = await Model.Script.create(item)
       item.detail.forEach(async (detail, dIndex) => {
         const scriptDetail_id = await Model.ScriptDetail.create({
-          pic: detail.pic,
+          source: detail.source,
           sort: dIndex,
           text: detail.text,
+          key: detail.key,
+          title: detail.title,
+          longOver: detail.longOver || false,
+          shortOver: detail.shortOver || false,
           script_id: script_id.dataValues.id,
         })
         
         detail.options.forEach(async (option, oIndex) => {
-          const sql_option = await Model.ChooseOption.create({
+           await Model.ChooseOption.create({
             label: option.label,
             sort: oIndex,
+            value: option.value,
             scriptDetail_id: scriptDetail_id.dataValues.id,
             script_id: script_id.dataValues.id,
-          })
-          await sql_option.update({
-            value: `${script_id.dataValues.id}-${scriptDetail_id.dataValues.id}-${sql_option.dataValues.id}`
           })
         })
       })

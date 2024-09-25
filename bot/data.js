@@ -198,7 +198,14 @@ async function get_script_detail(sendData, id) {
   let scripts;
   await dataBase.sequelize.transaction(async (t) => {
     try {
-      scripts = await Model.Script.findByPk(id)
+      if (!id) {
+        const _script = await Model.Script.findOne({
+          order: [['created', 'desc']]
+        })
+        scripts = _script.dataValues
+      } else {
+        scripts = await Model.Script.findByPk(id)
+      }
       scripts.config = await Model.Config.findOne()
       const isDone = await Model.Event.findOne({
         where: {
@@ -209,6 +216,14 @@ async function get_script_detail(sendData, id) {
       })
       if (isDone) {
         scripts.isDone = true
+      } else {
+        const isBegin = await Model.UserChoose.findOne({
+          script_id: id,
+          user_id: data.user_id
+        })
+        if (isBegin) {
+          scripts.isBegin = true
+        }
       }
     } catch (error) {
       console.error(error)
@@ -233,38 +248,42 @@ async function get_script_option(sendData, id) {
           script_id: id
         }
       })
-      
+
       if (isDone) {
-        const isReset = await Model.Event.findOne({
+        const userInfo = await Model.User.findOne({
           where: {
-            from_user: data.user_id,
-            script_id: id,
-            type: 'reset_script'
+            user_id: data.user_id
           }
         })
-        if (!isReset) {
-          await Model.User.decrement({
-            score: config.reset_jb
-          }, {
-            where: {
-              user_id: data.user_id,
-            }
-          })
-          const event_data = {
-            from_user: data.user_id,
-            to_user: data.user_id,
-            from_username: data.username,
-            to_username: data.username,
-            score: 0 - config.reset_jb,
-            type: 'reset_script',
-            script_id: id,
-            desc: `${data.username} reset a script`
-          }
-          await Model.Event.create(event_data)
+        if (userInfo.dataValues.ticket < config.choose_jb) {
+          options = false
+          return
         }
+        await Model.User.decrement({
+          ticket: config.reset_jb
+        }, {
+          where: {
+            user_id: data.user_id,
+          }
+        })
+        const event_data = {
+          from_user: data.user_id,
+          to_user: data.user_id,
+          from_username: data.username,
+          to_username: data.username,
+          ticket: 0 - config.reset_jb,
+          type: 'reset_script',
+          script_id: id,
+          desc: `${data.username} reset a script`
+        }
+        await Model.Event.create(event_data)
+        // 修改完成的记录
+        await isDone.update({
+          type: 'done_script_reset'
+        })
       }
 
-      // 扣分
+      // 扣次数
       const isBegin = await Model.UserChoose.findOne({
         where: {
           user_id: data.user_id,
@@ -278,12 +297,12 @@ async function get_script_option(sendData, id) {
             user_id: data.user_id
           }
         })
-        if (userInfo.dataValues.score < config.choose_jb) {
+        if (userInfo.dataValues.ticket < config.choose_jb) {
           options = false
           return
         }
         await userInfo.decrement({
-          score: config.choose_jb
+          ticket: config.choose_jb
         })
         await Model.UserChoose.create({
           user_id: data.user_id,
@@ -294,7 +313,7 @@ async function get_script_option(sendData, id) {
           to_user: data.user_id,
           from_username: data.username,
           to_username: data.username,
-          score: 0 - config.choose_jb,
+          ticket: 0 - config.choose_jb,
           type: 'choose_script',
           script_id: id,
           desc: `${data.username} choose a script`
@@ -388,57 +407,58 @@ async function choose_option(sendData, id) {
       scriptDetail = await Model.ScriptDetail.findOne({
         where: {
           script_id: _chooseDetail.script_id,
-          sort: scriptDetail.dataValues.sort + 1
+          key: _chooseDetail.value
         }
       })
 
-      if (!scriptDetail) {
-        let add_score = config.done_jb
-        if (result.code == 0) {
-          if (userInfo.dataValues.complete == 0) {
-            add_score += config.done_first_jb
-            const event_data = {
-              from_user: data.user_id,
-              to_user: data.user_id,
-              from_username: data.username,
-              to_username: data.username,
-              score: config.done_first_jb,
-              type: 'done_script_first',
-              desc: `${data.username} done a first script`
-            }
-            await Model.Event.create(event_data)
-          }
-          await userInfo.increment({
-            score: add_score,
-            complete: 1,
-          })
-          const event_data = {
-            from_user: data.user_id,
-            to_user: data.user_id,
-            from_username: data.username,
-            to_username: data.username,
-            score: config.done_jb,
-            type: 'done_script',
-            script_id: optionDetail.script_id,
-            desc: `${data.username} done a script`
-          }
-          await Model.Event.create(event_data)
+      result.data = scriptDetail.dataValues
+      const list = await Model.ChooseOption.findAll({
+        order: [['sort', 'asc']],
+        where: {
+          ScriptDetail_id: scriptDetail.dataValues.id
         }
-        result.code = 401
-        result.msg = '该剧本已经完成'
-      } else {
-        result.data = scriptDetail.dataValues
-        const list = await Model.ChooseOption.findAll({
-          order: [['sort', 'asc']],
-          where: {
-            ScriptDetail_id: scriptDetail.dataValues.id
-          }
-        })
-        result.data.list = []
-        list.forEach(element => {
-          result.data.list.push(element.dataValues)
-        });
-      }
+      })
+      result.data.list = []
+      list.forEach(element => {
+        result.data.list.push(element.dataValues)
+      });
+      // if (scriptDetail.shortOver || scriptDetail.longOver) {
+      //   let add_score = config.done_jb
+      //   if (scriptDetail.longOver) {
+      //     add_score = config.done_really_jb
+      //   }
+      //   if (result.code == 0) {
+      //     await userInfo.increment({
+      //       score: add_score,
+      //       complete: 1,
+      //     })
+      //     const event_data = {
+      //       from_user: data.user_id,
+      //       to_user: data.user_id,
+      //       from_username: data.username,
+      //       to_username: data.username,
+      //       score: config.done_jb,
+      //       type: 'done_script',
+      //       script_id: optionDetail.script_id,
+      //       desc: `${data.username} done a script`
+      //     }
+      //     await Model.Event.create(event_data)
+      //   }
+      //   result.code = 401
+      //   result.msg = '该剧本已经完成'
+      // } else {
+      //   result.data = scriptDetail.dataValues
+      //   const list = await Model.ChooseOption.findAll({
+      //     order: [['sort', 'asc']],
+      //     where: {
+      //       ScriptDetail_id: scriptDetail.dataValues.id
+      //     }
+      //   })
+      //   result.data.list = []
+      //   list.forEach(element => {
+      //     result.data.list.push(element.dataValues)
+      //   });
+      // }
     } catch (error) {
       console.error(error)
       bot_logger().error(`demo Error: ${error}`)
@@ -460,11 +480,11 @@ async function done_tasks(sendData, task_id) {
         },
       })
       if (!taskItem) {
-        status = '请先去完成任务'
+        status = 'Please complete the task first!'
         return
       }
       if (taskItem.dataValues.status == 'Done') {
-        status = '该任务已经完成'
+        status = 'The task has been completed!'
         return
       }
       taskItem.update({
@@ -472,10 +492,9 @@ async function done_tasks(sendData, task_id) {
       })
       const taskInfo = await Model.TaskList.findByPk(task_id)
 
-      status = `恭喜获得任务奖励：${taskInfo.score} 积分`
+      status = `Congratulations on receiving the task reward: ${taskInfo.ticket} limit`
       await Model.User.increment({
-        score: taskInfo.score,
-        task_score: taskInfo.score
+        ticket: taskInfo.ticket,
       },
         {
           where: {
@@ -562,6 +581,174 @@ async function operation_log(data) {
       bot_logger().error(`operation_log Error: ${error}`)
     }
   })
+}
+
+async function game_over(sendData, id) {
+  const data = handleSendData(sendData)
+  operation_log(data)
+  let result = {
+    code: 0,
+    msg: ''
+  }
+  await dataBase.sequelize.transaction(async (t) => {
+    try {
+
+      let user = await Model.User.findOne({
+        user_id: data.user_id,
+      })
+      const config = await Model.Config.findOne()
+      const optionDetail = await Model.ChooseOption.findByPk(id)
+      const scriptDetail = await Model.ScriptDetail.findByPk(optionDetail.scriptDetail_id)
+      const isDone = await Model.Event.findOne({
+        where: {
+          from_user: data.user_id,
+          type: 'done_script',
+          script_id: optionDetail.script_id
+        }
+      })
+      if (isDone) {
+        result = {
+          code: 400,
+          msg: 'Congratulations on completing the script!'
+        }
+        return
+      }
+
+      let add_score = config.done_jb
+      if (scriptDetail.longOver) {
+        add_score = config.done_really_jb
+      }
+      
+      await user.increment({
+        score: add_score,
+        complete: 1,
+      })
+      const event_data = {
+        from_user: data.user_id,
+        to_user: data.user_id,
+        from_username: data.username,
+        to_username: data.username,
+        score: add_score,
+        type: 'done_script',
+        script_id: optionDetail.script_id,
+        key: scriptDetail.key,
+        desc: `${data.username} done a script`
+      }
+      await Model.Event.create(event_data)
+    
+      if (user.startParam) {
+        const parentUser = await Model.User.findOne({
+          where: {
+            user_id: user.startParam
+          }
+        })
+        if (parentUser) {
+          const score_ratio = Math.floor(add_score * config.invite_friends_ratio / 100)
+          await parentUser.increment({
+            score: score_ratio,
+            invite_friends_score: score_ratio
+          })
+          event_data = {
+            type: 'done_script_parent',
+            from_user: data.user_id,
+            from_username: user.username,
+            to_user: parentUser.user_id,
+            to_username: parentUser.username,
+            score: score_ratio,
+            ticket: 0,
+            desc: `${parentUser.username} get done script reward ${score_ratio} Pts from ${user.username}`
+          }
+          await Model.Event.create(event_data)
+        }
+      }
+
+      // 检查是否完成了所有结局
+      const script_result = await Model.ScriptDetail.findAll({
+        attributes: ['key'],
+        where: {
+          script_id: optionDetail.script_id,
+          [dataBase.Op.or]: [
+            {
+              shortOver: true
+            },
+            {
+              longOver: true 
+            }
+          ]
+        }
+      })
+      const user_done_result = await Model.Event.findAll({
+        attributes: ['key'],
+        where: {
+          script_id: optionDetail.script_id,
+          from_user: data.user_id,
+          [dataBase.Op.or]: [
+            {
+              type: 'done_script'
+            },
+            {
+              type: 'done_script_reset'
+            }
+          ]
+        }
+      })
+      const is_done_all = await Model.Event.findOne({
+        where: {
+          type: 'done_script_all',
+          from_user: data.user_id,
+          script_id: optionDetail.script_id,
+        }
+      })
+      if (is_done_all) {
+        return
+      }
+      const _user_done_result = []
+      const _script_result = []
+      script_result.forEach(item => {
+        _script_result.push(item.dataValues.key)
+      })
+      user_done_result.forEach(item => {
+        _user_done_result.push(item.dataValues.key)
+      })
+
+      if (_script_result.every(value => _user_done_result.includes(value))) {
+        const event_data = {
+          from_user: data.user_id,
+          to_user: data.user_id,
+          from_username: data.username,
+          to_username: data.username,
+          score: config.done_jb_all,
+          type: 'done_script_all',
+          script_id: optionDetail.script_id,
+          desc: `${data.username} done a script`
+        }
+        await user.increment({
+          score: config.done_jb_all,
+        })
+        await Model.Event.create(event_data)
+      }
+    } catch (error) {
+      console.error(error)
+      bot_logger().error(`demo Error: ${error}`)
+    }
+  })
+  return result
+}
+
+async function accord_option_scriptId(sendData, id) {
+  const data = handleSendData(sendData)
+  operation_log(data)
+  let script_id;
+  await dataBase.sequelize.transaction(async (t) => {
+    try {
+      const operation = await Model.ChooseOption.findByPk(id)
+      script_id = operation.script_id
+    } catch (error) {
+      console.error(error)
+      bot_logger().error(`demo Error: ${error}`)
+    }
+  })
+  return script_id
 }
 
 async function user_checkIn(sendData) {
@@ -655,7 +842,7 @@ async function user_checkIn(sendData) {
               to_user: parentUser.user_id,
               to_username: parentUser.username,
               score: score_ratio,
-              ticket: 0,
+              ticket: reward.ticket,
               desc: `${parentUser.username} get checkIn reward ${score_ratio} Pts from ${user.username}`
             }
             await Model.Event.create(event_data)
@@ -666,6 +853,7 @@ async function user_checkIn(sendData) {
         check_date: today,
         score: reward.score,
         day: reward.day,
+        ticket: reward.ticket,
       }
     } catch (error) {
       console.error(error)
@@ -692,6 +880,8 @@ module.exports = {
   get_script_detail,
   get_script_option,
   choose_option,
+  game_over,
+  accord_option_scriptId,
 }
 
 

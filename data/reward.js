@@ -1,38 +1,38 @@
  const list = [
   {
     day: 1,
-    score: 15,
+    score: 0,
     ticket: 1,
   },
   {
     day: 2,
-    score: 18,
-    ticket: 2,
+    score: 50,
+    ticket: 1,
   },
   {
     day: 3,
-    score: 21,
-    ticket: 3,
+    score: 100,
+    ticket: 1,
   },
   {
     day: 4,
-    score: 24,
-    ticket: 4,
+    score: 150,
+    ticket: 1,
   },
   {
     day: 5,
-    score: 27,
-    ticket: 5,
+    score: 200,
+    ticket: 1,
   },
   {
     day: 6,
-    score: 30,
-    ticket: 6,
+    score: 250,
+    ticket: 1,
   },
   {
     day: 7,
-    score: 115,
-    ticket: 7,
+    score: 500,
+    ticket: 1,
   },
 ]
 

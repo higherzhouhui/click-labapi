@@ -26,7 +26,7 @@ const User = db.sequelize.define(
     task_score: { type: DataTypes.BIGINT, defaultValue: 0 },
     bind_wallet_score: { type: DataTypes.BIGINT, defaultValue: 0 },
     check_date: { type: DataTypes.STRING, defaultValue: '' },
-    ticket: { type: DataTypes.BIGINT, defaultValue: 10 },
+    ticket: { type: DataTypes.BIGINT, defaultValue: 3 },
     wallet: { type: DataTypes.STRING },
     type: { type: DataTypes.STRING },
     lang: { type: DataTypes.STRING, defaultValue: 'en' },
@@ -77,10 +77,14 @@ const Script = db.sequelize.define(
 const ScriptDetail = db.sequelize.define(
   'scriptDetail',
   {
-    pic: { type: DataTypes.STRING },
+    source: { type: DataTypes.STRING },
+    title: { type: DataTypes.STRING },
+    key: { type: DataTypes.STRING },
     text: { type: DataTypes.STRING },
     sort: { type: DataTypes.INTEGER },
     script_id: { type: DataTypes.INTEGER },
+    shortOver: { type: DataTypes.BOOLEAN, defaultValue: false },
+    longOver: { type: DataTypes.BOOLEAN, defaultValue: false },
   },
   {
     tableName: 'scriptDetail'
@@ -139,17 +143,18 @@ const UserChoose = db.sequelize.define(
 const Config = db.sequelize.define(
   'config',
   {
-    choose_jb: { type: DataTypes.INTEGER, defaultValue: 5 },
-    reset_jb: { type: DataTypes.INTEGER, defaultValue: 10 },
-    invite_friends_ratio: { type: DataTypes.INTEGER, defaultValue: 10 },
+    choose_jb: { type: DataTypes.INTEGER, defaultValue: 1 },
+    reset_jb: { type: DataTypes.INTEGER, defaultValue: 1 },
+    invite_friends_ratio: { type: DataTypes.INTEGER, defaultValue: 20 },
     open_new_jb: { type: DataTypes.INTEGER, defaultValue: 50 },
-    click_jb: { type: DataTypes.INTEGER, defaultValue: 3 },
-    done_jb: { type: DataTypes.INTEGER, defaultValue: 25 },
-    done_first_jb: { type: DataTypes.INTEGER, defaultValue: 200 },
-    invite: { type: DataTypes.INTEGER, defaultValue: 100 },
+    click_jb: { type: DataTypes.INTEGER, defaultValue: 25 },
+    done_jb: { type: DataTypes.INTEGER, defaultValue: 50 },
+    done_really_jb: { type: DataTypes.INTEGER, defaultValue: 100 },
+    done_jb_all: { type: DataTypes.INTEGER, defaultValue: 500 },
+    invite: { type: DataTypes.INTEGER, defaultValue: 1 },
     feed_back: { type: DataTypes.INTEGER, defaultValue: 20 },
     bug_back: { type: DataTypes.INTEGER, defaultValue: 50 },
-    bot_url: {type: DataTypes.STRING, defaultValue: 'https://t.me/thelostDog_bot'}
+    bot_url: {type: DataTypes.STRING, defaultValue: 'https://t.me/Click_alpha_bot'}
   },
   {
     tableName: 'config'
@@ -168,6 +173,7 @@ const Event = db.sequelize.define(
     desc: { type: DataTypes.STRING },
     ticket: { type: DataTypes.INTEGER, defaultValue: 0 },
     script_id: { type: DataTypes.INTEGER },
+    key: { type: DataTypes.STRING },
     is_really: { type: DataTypes.BOOLEAN, defaultValue: true }
   },
   {
