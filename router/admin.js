@@ -85,7 +85,7 @@ async function init_scripts() {
     //           },
     //           {
     //             label: `B：說服艾琳娜先觀察以找到更多線索再想辦法解救她的妹妹。`,
-    //             value: '2A',
+    //             value: '2B',
     //           },
     //         ]
     //       },
@@ -340,7 +340,7 @@ async function init_scripts() {
               },
               {
                 label: `Convince Elena to observe further for clues before attempting to rescue her sister. `,
-                value: '2A',
+                value: '2B',
               },
             ]
           },
@@ -421,7 +421,7 @@ async function init_scripts() {
               },
               {
                 label: `Convince Elena to observe further to gather more clues before attempting to rescue her sister.`,
-                value: '2A',
+                value: '2B',
               },
             ]
           },

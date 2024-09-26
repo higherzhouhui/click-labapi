@@ -112,7 +112,7 @@ async function create_user(sendData) {
               }
             })
             if (parentUser) {
-              if (!userInfo.startParam) {
+              if (userInfo.startParam == 0) {
                 await userInfo.update({
                   startParam: startParam
                 })
