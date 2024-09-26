@@ -184,7 +184,8 @@ bot.on('callback_query', async (msg) => {
     } else if (data.includes('over-')) {
       // const option_id = data.replace('over-', '')
       // await operation.game_over(msg, option_id)
-      utils.startShow(msg)
+      // utils.startShow(msg)
+      utils.checkShow(msg)
     } else if (data.includes('restart-') || data == 'latest' || data.includes('story-')) {
       let script_id = ''
       if (data.includes('restart-')) {

@@ -400,11 +400,11 @@ async function init_scripts() {
             shortOver: true,
             options: [
               {
-                label: `End the script.`,
+                label: `End the script`,
                 value: 'over',
               },
               {
-                label: `Restart.`,
+                label: `Restart`,
                 value: 'restart',
               },
             ]
@@ -433,11 +433,11 @@ async function init_scripts() {
             shortOver: true,
             options: [
               {
-                label: `End the script.`,
+                label: `End the script`,
                 value: 'over',
               },
               {
-                label: `Restart.`,
+                label: `Restart`,
                 value: 'restart',
               },
             ]
@@ -498,11 +498,11 @@ async function init_scripts() {
             longOver: true,
             options: [
               {
-                label: `End the script.`,
+                label: `End the script`,
                 value: 'over',
               },
               {
-                label: `Restart.`,
+                label: `Restart`,
                 value: 'restart',
               },
             ]
@@ -515,11 +515,11 @@ async function init_scripts() {
             longOver: true,
             options: [
               {
-                label: `End the script.`,
+                label: `End the script`,
                 value: 'over',
               },
               {
-                label: `Restart.`,
+                label: `Restart`,
                 value: 'restart',
               },
             ]
@@ -532,11 +532,11 @@ async function init_scripts() {
             longOver: true,
             options: [
               {
-                label: `End the script.`,
+                label: `End the script`,
                 value: 'over',
               },
               {
-                label: `Restart.`,
+                label: `Restart`,
                 value: 'restart',
               },
             ]
@@ -549,11 +549,11 @@ async function init_scripts() {
             longOver: true,
             options: [
               {
-                label: `End the script.`,
+                label: `End the script`,
                 value: 'over',
               },
               {
-                label: `Restart.`,
+                label: `Restart`,
                 value: 'restart',
               },
             ]

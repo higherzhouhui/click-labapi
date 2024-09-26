@@ -1,7 +1,9 @@
 const operation = require('./data')
 const { bot, bot_logger } = require('./index')
 
-const share_text = `Forget Netflix! Stop paying to watch boring shows! 🥱 Click in and take control of the interactive stories. Be the main character and even earn points for airdrops! 🚀`
+const share_text = `Forget Netflix! Stop paying to watch boring shows! 🥱 Be the main character and even earn points for airdrops! 🚀
+
+Click in and take control of the interactive stories. Will you save her? 🕵️‍♂️`
 
 async function getMessage(id, key) {
   try {
@@ -102,13 +104,13 @@ async function checkShow(msg) {
     const userInfo = await operation.get_userInfo(msg)
     const config = await operation.get_config()
     const replyMarkup = {
-      caption: `<b>${userInfo.username}</b>\n\nScore:<b>${userInfo.score}</b> Pts\nStory Limit: <b>${userInfo.ticket}</b>\nComplete Story Times: <b>${userInfo.complete}</b>\nFriends: <b>${userInfo.count}</b>\nInvite Link: ${config.bot_url}?start=${btoa(chatId)}`,
+      caption: `<b>${userInfo.username}</b>\n\nScore: <b>${userInfo.score}</b> Pts\nStory Limit: <b>${userInfo.ticket}</b>\nComplete Story Times: <b>${userInfo.complete}</b>\nFriends: <b>${userInfo.count}</b>\nInvite Link: ${config.bot_url}?start=${btoa(chatId)}`,
       parse_mode: 'HTML',
       reply_markup: {
         inline_keyboard: [
           [
             {
-              text: "Return",
+              text: "Menu",
               callback_data: 'menu'
             },
           ],
