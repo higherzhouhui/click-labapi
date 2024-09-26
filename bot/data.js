@@ -450,7 +450,7 @@ async function choose_option(sendData, id) {
         result.data.list.push(element.dataValues)
       });
       if (scriptDetail.shortOver || scriptDetail.longOver) {
-        game_over(sendData, id)
+        game_over(sendData, list[0].id)
       }
       // if (scriptDetail.shortOver || scriptDetail.longOver) {
       //   let add_score = config.done_jb
@@ -624,7 +624,9 @@ async function game_over(sendData, id) {
     try {
 
       let user = await Model.User.findOne({
-        user_id: data.user_id,
+        where: {
+          user_id: data.user_id,
+        }
       })
       const config = await Model.Config.findOne()
       const optionDetail = await Model.ChooseOption.findByPk(id)
