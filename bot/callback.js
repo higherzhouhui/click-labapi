@@ -139,7 +139,7 @@ bot.on('callback_query', async (msg) => {
                 },
                 {
                   text: list[index + 1].label,
-                  callback_data: `${list[index + 1].value}-${list[index + 1].id}`
+                  callback_data: `${list[index + 1].value}-${list[index + 1].script_id}`
                 }
               ])
             }
@@ -186,14 +186,14 @@ bot.on('callback_query', async (msg) => {
       // await operation.game_over(msg, option_id)
       utils.startShow(bot, msg)
     } else if (data.includes('restart-') || data == 'latest' || data.includes('story-')) {
-      let option_id = ''
+      let script_id = ''
       if (data.includes('restart-')) {
-        option_id = data.replace('restart-', '')
+        script_id = data.replace('restart-', '')
       }
       if (data.includes('story-')) {
-        option_id = data.replace('story-', '')
+        script_id = data.replace('story-', '')
       }
-      utils.latestShow(bot, msg, option_id)
+      utils.latestShow(bot, msg, script_id)
     } else if (data == 'share_link') {
       const config = await operation.get_config()
       const text = `${config.bot_url}?start=${btoa(chatId)} Forget Netflix! Stop paying to watch boring shows! 🥱 Click in and take control of the interactive stories. Be the main character and even earn points for airdrops! 🚀`
