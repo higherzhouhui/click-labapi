@@ -49,36 +49,39 @@ async function create_user(sendData) {
       })
       if (!userInfo) {
         const text = data.text
-        const parameter = text.split(' ')[1]; // 假设参数紧跟在/start之后
-        if (parameter) {
-          data.text = '/start'
-          const startParam = parseInt(atob(parameter))
-          if (!isNaN(startParam)) {
-            data.startParam = startParam
-            const parentUser = await Model.User.findOne({
-              user_id: startParam
-            })
-            if (parentUser) {
-              const config = await Model.Config.findOne()
-              parentUser.increment({
-                invite_friends_score: config.invite,
-                score: config.invite,
-                ticket: config.invite_ticket
+        if (text.split(' ').length == 2) {
+          const parameter = text.split(' ')[1]; // 假设参数紧跟在/start之后
+          if (parameter) {
+            data.text = '/start'
+            const startParam = parseInt(atob(parameter))
+            if (!isNaN(startParam)) {
+              data.startParam = startParam
+              const parentUser = await Model.User.findOne({
+                user_id: startParam
               })
-              const event_data = {
-                type: 'Inviting',
-                from_user: data.user_id,
-                to_user: startParam,
-                score: config.invite,
-                ticket: config.config,
-                from_username: data.username,
-                to_username: parentUser.username,
-                desc: `${parentUser.username} invite ${data.username} join us!`
+              if (parentUser) {
+                const config = await Model.Config.findOne()
+                parentUser.increment({
+                  invite_friends_score: config.invite,
+                  score: config.invite,
+                  ticket: config.invite_ticket
+                })
+                const event_data = {
+                  type: 'Inviting',
+                  from_user: data.user_id,
+                  to_user: startParam,
+                  score: config.invite,
+                  ticket: config.config,
+                  from_username: data.username,
+                  to_username: parentUser.username,
+                  desc: `${parentUser.username} invite ${data.username} join us!`
+                }
+                await Model.Event.create(event_data)
               }
-              await Model.Event.create(event_data)
             }
           }
         }
+        
         await Model.User.create(data)
         const event_data = {
           type: 'Register',
