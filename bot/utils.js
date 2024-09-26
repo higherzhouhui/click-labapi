@@ -1,5 +1,5 @@
 const operation = require('./data')
-const { bot } = require('./index')
+const { bot, bot_logger } = require('./index')
 
 const share_text = `Forget Netflix! Stop paying to watch boring shows! 🥱 Click in and take control of the interactive stories. Be the main character and even earn points for airdrops! 🚀`
 
@@ -87,30 +87,36 @@ async function startShow(msg) {
 }
 
 async function checkShow(msg) {
-  let chatId;
-  if (msg.chat) {
-    chatId = msg.chat.id
-  }
-  if (msg.message && msg.message.chat) {
-    chatId = msg.message.chat.id
-  }
-  const userInfo = await operation.get_userInfo(msg)
-  const config = await operation.get_config()
-  const replyMarkup = {
-    caption: `<b>${userInfo.username}</b>\n\nScore:<b>${userInfo.score}</b> Pts\nStory Limit: <b>${userInfo.ticket}</b>\nComplete Story Times: <b>${userInfo.complete}</b>\nFriends: <b>${userInfo.count}</b>\nInvite Link: ${config.bot_url}?start=${btoa(chatId)}`,
-    parse_mode: 'HTML',
-    reply_markup: {
-      inline_keyboard: [
-        [
-          {
-            text: "Return",
-            callback_data: 'menu'
-          },
-        ],
-      ]
+  try {
+
+
+    let chatId;
+    if (msg.chat) {
+      chatId = msg.chat.id
     }
-  };
-  bot.sendMessage(chatId, replyMarkup.caption, replyMarkup);
+    if (msg.message && msg.message.chat) {
+      chatId = msg.message.chat.id
+    }
+    const userInfo = await operation.get_userInfo(msg)
+    const config = await operation.get_config()
+    const replyMarkup = {
+      caption: `<b>${userInfo.username}</b>\n\nScore:<b>${userInfo.score}</b> Pts\nStory Limit: <b>${userInfo.ticket}</b>\nComplete Story Times: <b>${userInfo.complete}</b>\nFriends: <b>${userInfo.count}</b>\nInvite Link: ${config.bot_url}?start=${btoa(chatId)}`,
+      parse_mode: 'HTML',
+      reply_markup: {
+        inline_keyboard: [
+          [
+            {
+              text: "Return",
+              callback_data: 'menu'
+            },
+          ],
+        ]
+      }
+    };
+    bot.sendMessage(chatId, replyMarkup.caption, replyMarkup);
+  } catch (error) {
+    bot_logger().error('check error:', `${error}`)
+  }
 }
 
 async function rewardsShow(msg) {
@@ -285,7 +291,7 @@ async function referShow(msg) {
             switch_inline_query: `${share_text}\n${link}`
           },
         ],
-   
+
       ]
     }
   };
@@ -312,7 +318,7 @@ async function guideShow(msg) {
             url: config.guide_url
           },
         ],
-   
+
       ]
     }
   };
