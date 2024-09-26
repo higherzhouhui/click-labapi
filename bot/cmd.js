@@ -54,7 +54,7 @@ bot.onText(/\/rewards/, async (msg) => {
 
 bot.onText(/\/refer/, async (msg) => {
   try {
-    
+    utils.referShow(bot, msg)
   } catch (error) {
     bot_logger().error(`checkin Error: ${error}`)
   }

@@ -155,7 +155,8 @@ const Config = db.sequelize.define(
     invite_ticket: { type: DataTypes.INTEGER, defaultValue: 1 },
     feed_back: { type: DataTypes.INTEGER, defaultValue: 20 },
     bug_back: { type: DataTypes.INTEGER, defaultValue: 50 },
-    bot_url: {type: DataTypes.STRING, defaultValue: 'https://t.me/Click_alpha_bot'}
+    bot_url: {type: DataTypes.STRING, defaultValue: 'https://t.me/Click_alpha_bot'},
+    guide_url: {type: DataTypes.STRING, defaultValue: 'https://x.com/Clickminiapp'},
   },
   {
     tableName: 'config'

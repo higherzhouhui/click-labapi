@@ -195,9 +195,7 @@ bot.on('callback_query', async (msg) => {
       }
       utils.latestShow(bot, msg, script_id)
     } else if (data == 'share_link') {
-      const config = await operation.get_config()
-      const text = `${config.bot_url}?start=${btoa(chatId)} Forget Netflix! Stop paying to watch boring shows! 🥱 Click in and take control of the interactive stories. Be the main character and even earn points for airdrops! 🚀`
-      bot.sendMessage(chatId, text)
+      utils.referShow(bot, msg)
     } else if (data == 'rewards') {
       utils.rewardsShow(bot, msg)
     }

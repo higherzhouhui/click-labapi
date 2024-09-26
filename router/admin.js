@@ -460,7 +460,7 @@ async function init_scripts() {
           },
           {
             source: '4',
-            title: 'nThe Monster',
+            title: 'The Monster',
             text: `You shout desperately, calling out for "Dad"! Suddenly, you feel a rumbling sound beneath your feet, shaking the entire space. Shocked, you fall to the ground…\nFather: "No need to search, you’re already standing on my body…"\nYou: "Dad! What happened?"\nFather: "I’m sorry, I created this monster... It’s too late now. The Red Room has consumed me, and it will consume you too. Don’t waste your time, unless…"\nFather continues: "Son, join me. Together, we can devour the whole world!"`,
             key: '4A',
             options: [
@@ -476,8 +476,8 @@ async function init_scripts() {
           },
           {
             source: '4-1',
-            title: 'nWhom Should I Save?',
-            text: `You try to forcibly pull Elena’s sister out of the wall. The Red Room seems to react in pain, letting out agonizing groans that increasingly resemble your father’s voice…\n紅房子：「兒子，兒子……」\nRed Room: "Son, son…"\nYou: "Dad?! What’s happening?"\nFather: "Stop pulling her out of my body! If you keep going, I’ll die!"`,
+            title: 'Whom Should I Save?',
+            text: `You try to forcibly pull Elena’s sister out of the wall. The Red Room seems to react in pain, letting out agonizing groans that increasingly resemble your father’s voice…\nRed Room: "Son, son…"\nYou: "Dad?! What’s happening?"\nFather: "Stop pulling her out of my body! If you keep going, I’ll die!"`,
             key: '4B',
             options: [
               {

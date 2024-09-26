@@ -2,8 +2,8 @@
   "scripts": {
     "init": "INIT=1 node server.js",
     "init:win": "set INIT=1 && node server.js",
-    "start": "nodemon --trace-deprecation server.js",
-    "dev": "set NODE_ENV=1 && nodemon --trace-deprecation server.js",
+    "start": "nodemon server.js",
+    "dev": "set NODE_ENV=1 && nodemon server.js",
     "dev:linux": "NODE_ENV=1 nodemon server.js",
     "pm2": "pm2 start server.js --name 'Race-v1'"
   },

@@ -27,7 +27,7 @@ async function startShow(bot, msg) {
     chatId = msg.message.chat.id
   }
   const source = 'https://my-blog-seven-omega.vercel.app/static/gif/welcome.gif'
-  const text = `\n<b>Welcome to (play)Lab Alpha!</b>\n\n📜 You’ve just unlocked the first chapter of our journey!\n\n🧙‍♂️ In this alpha version, you’ll dive into a fun, interactive short story. Make your choices, earn points, and see where the plot takes you! <b>These points will be crucial for upcoming rewards, so don’t miss a chance to build them up.</b>\n\n💥 And guess what? More features from Click are on the way—you’re part of something big!\n\n<i>Subscribe to our channel for more points and updates!</i>(https://t.me/+CFUnnwrLIcgzOWFl)`;
+  const text = `\n<b>Welcome to (play)Lab Alpha!</b>\n\n📜 You’ve just unlocked the first chapter of our journey!\n\n🧙‍♂️ In this alpha version, you’ll dive into a fun, interactive short story. Make your choices, earn points, and see where the plot takes you! <b>These points will be crucial for upcoming rewards, so don’t miss a chance to build them up.</b>\n\n💥 And guess what? More features from Click are on the way—you’re part of something big!\n\n<a href='https://t.me/Click_announcement'>Subscribe to our channel for more points and updates!</a>`;
   const replyMarkup = {
     caption: text,
     parse_mode: 'HTML',
@@ -54,19 +54,19 @@ async function startShow(bot, msg) {
         [
           {
             text: "Follow Our X (+1 Story Limit)",
-            url: 'https://x.com/binance',
+            url: 'https://x.com/Clickminiapp',
           },
         ],
         [
           {
             text: "Subscribe to Our Channel(+1 Story Limit)",
-            url: 'https://t.me/+CFUnnwrLIcgzOWFl',
+            url: 'https://t.me/Click_announcement',
           }
         ],
         [
           {
             text: "Join Our Group (+1 Story Limit)",
-            url: 'https://t.me/+CFUnnwrLIcgzOWFl',
+            url: 'https://t.me/Click_announcement',
           }
         ],
         [
@@ -208,6 +208,7 @@ async function menuShow(bot, msg) {
     chatId = msg.message.chat.id
     username = msg.message.chat.username
   }
+  const config = await operation.get_config()
   const source = 'https://my-blog-seven-omega.vercel.app/static/gif/introduce.gif'
   const replyMarkup = {
     caption: `<b>Menu</b>`,
@@ -235,13 +236,13 @@ async function menuShow(bot, msg) {
         [
           {
             text: "Quick Refer",
-            callback_data: "refer"
+            callback_data: "share_link"
           },
         ],
         [
           {
             text: "Guide",
-            callback_data: "guide"
+            url: config.guide_url
           },
         ],
         [
@@ -254,6 +255,32 @@ async function menuShow(bot, msg) {
     }
   };
   bot.sendMessage(chatId, replyMarkup.caption, replyMarkup);
+}
+
+async function referShow(bot, msg) {
+  let chatId;
+  if (msg.chat) {
+    chatId = msg.chat.id
+  }
+  if (msg.message && msg.message.chat) {
+    chatId = msg.message.chat.id
+  }
+  const config = await operation.get_config()
+  const text = `invite your friend  +${config.invite_friends_ratio}% reward\nYou're referral link: ${config.bot_url}?start=${btoa(chatId)}\n\nForget Netflix! Stop paying to watch boring shows! 🥱 Click in and take control of the interactive stories. Be the main character and even earn points for airdrops! 🚀`
+  const replyMarkup = {
+    parse_mode: 'HTML',
+    reply_markup: {
+      inline_keyboard: [
+        [
+          {
+            text: "Return",
+            callback_data: 'menu'
+          },
+        ],
+      ]
+    }
+  };
+  bot.sendMessage(chatId, text, replyMarkup)
 }
 
 async function chooseShow(bot, msg) {
@@ -351,4 +378,5 @@ module.exports = {
   rewardsShow,
   chooseShow,
   checkShow,
+  referShow,
 }
