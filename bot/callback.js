@@ -139,7 +139,7 @@ bot.on('callback_query', async (msg) => {
                 },
                 {
                   text: list[index + 1].label,
-                  callback_data: `${list[index].value}-${list[index + 1].id}`
+                  callback_data: `${list[index + 1].value}-${list[index + 1].id}`
                 }
               ])
             }
