@@ -13,7 +13,7 @@ bot.on('callback_query', async (msg) => {
     const queryId = msg.id;
 
     if (data == 'menu') {
-      utils.menuShow(bot, msg)
+      utils.menuShow(msg)
       
     } else if (data == 'tasks') {
       const list = await operation.get_tasks(msg)
@@ -51,7 +51,7 @@ bot.on('callback_query', async (msg) => {
       bot.sendPhoto(chatId, logo, replyMarkup);
 
     } else if (data == 'check') {
-      utils.checkShow(bot, msg)
+      utils.checkShow(msg)
     } else if (data.includes('check-')) {
       const task_id = data.replace('check-', '')
       const name = await operation.check_tasks(msg, task_id)
@@ -77,9 +77,9 @@ bot.on('callback_query', async (msg) => {
     } else if (data == 'feedBack') {
       bot.sendMessage(chatId, 'OK. Send me a FAQ and content. Please use this format:\n\nFAQ - content')
     } else if (data == 'checkIn') {
-      utils.checkIn(bot, msg)
+      utils.checkIn(msg)
     } else if (data == 'choose') {
-      utils.chooseShow(bot, msg)
+      utils.chooseShow(msg)
     } else if (data.includes('beginScript-')) {
       const script_id = data.replace('beginScript-', '')
       const result = await operation.get_script_option(msg, script_id)
@@ -184,7 +184,7 @@ bot.on('callback_query', async (msg) => {
     } else if (data.includes('over-')) {
       // const option_id = data.replace('over-', '')
       // await operation.game_over(msg, option_id)
-      utils.startShow(bot, msg)
+      utils.startShow(msg)
     } else if (data.includes('restart-') || data == 'latest' || data.includes('story-')) {
       let script_id = ''
       if (data.includes('restart-')) {
@@ -193,11 +193,11 @@ bot.on('callback_query', async (msg) => {
       if (data.includes('story-')) {
         script_id = data.replace('story-', '')
       }
-      utils.latestShow(bot, msg, script_id)
+      utils.latestShow(msg, script_id)
     } else if (data == 'share_link') {
-      utils.referShow(bot, msg)
+      utils.referShow(msg)
     } else if (data == 'rewards') {
-      utils.rewardsShow(bot, msg)
+      utils.rewardsShow(msg)
     }
     bot.answerCallbackQuery(queryId)
   } catch (error) {

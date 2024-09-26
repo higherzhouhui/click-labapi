@@ -157,6 +157,7 @@ const Config = db.sequelize.define(
     bug_back: { type: DataTypes.INTEGER, defaultValue: 50 },
     bot_url: {type: DataTypes.STRING, defaultValue: 'https://t.me/Click_alpha_bot'},
     guide_url: {type: DataTypes.STRING, defaultValue: 'https://x.com/Clickminiapp'},
+    faq_url: {type: DataTypes.STRING, defaultValue: 'https://x.com/Clickminiapp'},
   },
   {
     tableName: 'config'

@@ -10,7 +10,7 @@ const imageUrl = 'https://img0.baidu.com/it/u=739050917,3625217136&fm=253&fmt=au
 bot.onText(/\/start/, async (msg) => {
   const chatId = msg.chat.id
   try {
-    utils.startShow(bot, msg)
+    utils.startShow(msg)
   } catch (error) {
     bot_logger().error(`${chatId} start error: ${error}`)
   }
@@ -19,7 +19,7 @@ bot.onText(/\/start/, async (msg) => {
 
 bot.onText(/\/menu/, async (msg) => {
   try {
-    utils.menuShow(bot, msg)
+    utils.menuShow(msg)
   } catch (error) {
     bot_logger().error(`menu error: ${error}`)
   }
@@ -28,7 +28,7 @@ bot.onText(/\/menu/, async (msg) => {
 
 bot.onText(/\/latest/, async (msg) => {
   try {
-    utils.latestShow(bot, msg)
+    utils.latestShow(msg)
   } catch (error) {
     bot_logger().error(`latest Error: ${error}`)
   }
@@ -37,7 +37,7 @@ bot.onText(/\/latest/, async (msg) => {
 
 bot.onText(/\/choose/, async (msg) => {
   try {
-    utils.chooseShow(bot, msg)
+    utils.chooseShow(msg)
   } catch (error) {
     bot_logger().error(`choose Error: ${error}`)
   }
@@ -45,16 +45,15 @@ bot.onText(/\/choose/, async (msg) => {
 
 bot.onText(/\/rewards/, async (msg) => {
   try {
-    utils.rewardsShow(bot, msg)
+    utils.rewardsShow(msg)
   } catch (error) {
     bot_logger().error(`rewards Error: ${error}`)
-
   }
 });
 
 bot.onText(/\/refer/, async (msg) => {
   try {
-    utils.referShow(bot, msg)
+    utils.referShow(msg)
   } catch (error) {
     bot_logger().error(`checkin Error: ${error}`)
   }
@@ -62,7 +61,7 @@ bot.onText(/\/refer/, async (msg) => {
 
 bot.onText(/\/guide/, async (msg) => {
   try {
-    
+    utils.guideShow(msg)
   } catch (error) {
     bot_logger().error(`checkin Error: ${error}`)
   }
@@ -70,7 +69,7 @@ bot.onText(/\/guide/, async (msg) => {
 
 bot.onText(/\/check/, async (msg) => {
   try {
-    utils.checkShow(bot, msg)
+    utils.checkShow(msg)
   } catch (error) {
     bot_logger().error(`check Error: ${error}`)
   }

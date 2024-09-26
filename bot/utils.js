@@ -1,5 +1,7 @@
 const operation = require('./data')
-const fs = require('fs');
+const { bot } = require('./index')
+
+const share_text = `Forget Netflix! Stop paying to watch boring shows! 🥱 Click in and take control of the interactive stories. Be the main character and even earn points for airdrops! 🚀`
 
 async function getMessage(id, key) {
   try {
@@ -17,7 +19,7 @@ function getLocalSource(url) {
   return source
 }
 
-async function startShow(bot, msg) {
+async function startShow(msg) {
   await operation.create_user(msg)
   let chatId;
   if (msg.chat) {
@@ -26,6 +28,8 @@ async function startShow(bot, msg) {
   if (msg.message && msg.message.chat) {
     chatId = msg.message.chat.id
   }
+  const config = await operation.get_config()
+  const link = `${config.bot_url}?start=${btoa(chatId)}`
   const source = 'https://my-blog-seven-omega.vercel.app/static/gif/welcome.gif'
   const text = `\n<b>Welcome to (play)Lab Alpha!</b>\n\n📜 You’ve just unlocked the first chapter of our journey!\n\n🧙‍♂️ In this alpha version, you’ll dive into a fun, interactive short story. Make your choices, earn points, and see where the plot takes you! <b>These points will be crucial for upcoming rewards, so don’t miss a chance to build them up.</b>\n\n💥 And guess what? More features from Click are on the way—you’re part of something big!\n\n<a href='https://t.me/Click_announcement'>Subscribe to our channel for more points and updates!</a>`;
   const replyMarkup = {
@@ -48,7 +52,7 @@ async function startShow(bot, msg) {
         [
           {
             text: "Invite for Points",
-            callback_data: 'share_link',
+            switch_inline_query: `${share_text}\n${link}`
           },
         ],
         [
@@ -72,7 +76,7 @@ async function startShow(bot, msg) {
         [
           {
             text: "FAQ",
-            callback_data: 'feedBack',
+            url: config.faq_url,
           }
         ],
       ]
@@ -82,7 +86,7 @@ async function startShow(bot, msg) {
   bot.sendVideo(chatId, source, replyMarkup);
 }
 
-async function checkShow(bot, msg) {
+async function checkShow(msg) {
   let chatId;
   if (msg.chat) {
     chatId = msg.chat.id
@@ -109,7 +113,7 @@ async function checkShow(bot, msg) {
   bot.sendMessage(chatId, replyMarkup.caption, replyMarkup);
 }
 
-function rewardsShow(bot, msg) {
+async function rewardsShow(msg) {
   let chatId;
   if (msg.chat) {
     chatId = msg.chat.id
@@ -117,6 +121,8 @@ function rewardsShow(bot, msg) {
   if (msg.message && msg.message.chat) {
     chatId = msg.message.chat.id
   }
+  const config = await operation.get_config()
+  const link = `${config.bot_url}?start=${btoa(chatId)}`
   const text = `🎁 Start Your Day with More Rewards!\n\nCheck in every day to unlock growing bonuses. Complete your daily tasks to boost your points and reach the next level!`;
   const replyMarkup = {
     caption: text,
@@ -132,31 +138,31 @@ function rewardsShow(bot, msg) {
         [
           {
             text: "Invite for Points",
-            callback_data: 'share_link',
+            switch_inline_query: `${share_text}\n${link}`
           },
         ],
         [
           {
             text: "Follow Our X (+1 Story Limit)",
-            url: 'https://x.com/binance',
+            url: 'https://x.com/Clickminiapp',
           },
         ],
         [
           {
             text: "Subscribe to Our Channel(+1 Story Limit)",
-            url: 'https://t.me/+CFUnnwrLIcgzOWFl',
+            url: 'https://t.me/Click_announcement',
           }
         ],
         [
           {
             text: "Join Our Group (+1 Story Limit)",
-            url: 'https://t.me/+CFUnnwrLIcgzOWFl',
+            url: 'https://t.me/Click_announcement',
           }
         ],
         [
           {
             text: "FAQ",
-            callback_data: 'feedBack',
+            url: config.faq_url,
           }
         ],
       ]
@@ -166,7 +172,7 @@ function rewardsShow(bot, msg) {
   bot.sendMessage(chatId, replyMarkup.caption, replyMarkup);
 }
 
-async function checkIn(bot, msg) {
+async function checkIn(msg) {
   let chatId;
   if (msg.chat) {
     chatId = msg.chat.id
@@ -197,7 +203,7 @@ async function checkIn(bot, msg) {
   }
 }
 
-async function menuShow(bot, msg) {
+async function menuShow(msg) {
   let chatId;
   let username;
   if (msg.chat) {
@@ -209,6 +215,7 @@ async function menuShow(bot, msg) {
     username = msg.message.chat.username
   }
   const config = await operation.get_config()
+  const link = `${config.bot_url}?start=${btoa(chatId)}`
   const source = 'https://my-blog-seven-omega.vercel.app/static/gif/introduce.gif'
   const replyMarkup = {
     caption: `<b>Menu</b>`,
@@ -236,7 +243,7 @@ async function menuShow(bot, msg) {
         [
           {
             text: "Quick Refer",
-            callback_data: "share_link"
+            switch_inline_query: `${share_text}\n${link}`
           },
         ],
         [
@@ -248,7 +255,7 @@ async function menuShow(bot, msg) {
         [
           {
             text: "Current Points and Story Limits",
-            callback_data: "checkIn"
+            callback_data: "check"
           },
         ],
       ]
@@ -257,7 +264,7 @@ async function menuShow(bot, msg) {
   bot.sendMessage(chatId, replyMarkup.caption, replyMarkup);
 }
 
-async function referShow(bot, msg) {
+async function referShow(msg) {
   let chatId;
   if (msg.chat) {
     chatId = msg.chat.id
@@ -266,24 +273,54 @@ async function referShow(bot, msg) {
     chatId = msg.message.chat.id
   }
   const config = await operation.get_config()
-  const text = `invite your friend  +${config.invite_friends_ratio}% reward\nYou're referral link: ${config.bot_url}?start=${btoa(chatId)}\n\nForget Netflix! Stop paying to watch boring shows! 🥱 Click in and take control of the interactive stories. Be the main character and even earn points for airdrops! 🚀`
+  const link = `${config.bot_url}?start=${btoa(chatId)}`
   const replyMarkup = {
+    caption: `You're referral link: \n${link}`,
     parse_mode: 'HTML',
     reply_markup: {
       inline_keyboard: [
         [
           {
-            text: "Return",
-            callback_data: 'menu'
+            text: "Invite for Points",
+            switch_inline_query: `${share_text}\n${link}`
           },
         ],
+   
       ]
     }
   };
-  bot.sendMessage(chatId, text, replyMarkup)
+  bot.sendMessage(chatId, replyMarkup.caption, replyMarkup)
 }
 
-async function chooseShow(bot, msg) {
+async function guideShow(msg) {
+  let chatId;
+  if (msg.chat) {
+    chatId = msg.chat.id
+  }
+  if (msg.message && msg.message.chat) {
+    chatId = msg.message.chat.id
+  }
+  const config = await operation.get_config()
+  const replyMarkup = {
+    caption: `guide link: \n${config.guide_url}`,
+    parse_mode: 'HTML',
+    reply_markup: {
+      inline_keyboard: [
+        [
+          {
+            text: "Guide",
+            url: config.guide_url
+          },
+        ],
+   
+      ]
+    }
+  };
+  bot.sendMessage(chatId, replyMarkup.caption, replyMarkup)
+}
+
+
+async function chooseShow(msg) {
   let chatId;
   if (msg.chat) {
     chatId = msg.chat.id
@@ -318,7 +355,7 @@ async function chooseShow(bot, msg) {
   bot.sendMessage(chatId, replyMarkup.caption, replyMarkup);
 }
 
-async function latestShow(bot, msg, option_id) {
+async function latestShow(msg, option_id) {
   let chatId;
   if (msg.chat) {
     chatId = msg.chat.id
@@ -379,4 +416,5 @@ module.exports = {
   chooseShow,
   checkShow,
   referShow,
+  guideShow,
 }
