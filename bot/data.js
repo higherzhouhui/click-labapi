@@ -133,7 +133,7 @@ async function create_user(sendData) {
                 }
               })
               // 每天三次
-              if (dailyRewards.count < 3) {
+              if (dailyRewards.count <= 3) {
                 const currentReward = await Model.Event.findAndCountAll({
                   where: {
                     type: 'share_reward',
