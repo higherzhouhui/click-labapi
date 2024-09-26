@@ -145,7 +145,7 @@ async function create_user(sendData) {
                     }
                   }
                 })
-                if (!currentReward.count) {
+                if (currentReward.count == 0) {
                   await parentUser.increment({
                     ticket: 1
                   })
@@ -726,7 +726,7 @@ async function game_over(sendData, id) {
         score: add_score,
         complete: 1,
       })
-      const event_data = {
+      let event_data = {
         from_user: data.user_id,
         to_user: data.user_id,
         from_username: data.username,
@@ -759,6 +759,8 @@ async function game_over(sendData, id) {
             to_username: parentUser.username,
             score: score_ratio,
             ticket: 0,
+            script_id: optionDetail.script_id,
+            key: scriptDetail.key,
             desc: `${parentUser.username} get done script reward ${score_ratio} Pts from ${user.username}`
           }
           await Model.Event.create(event_data)
@@ -945,7 +947,7 @@ async function user_checkIn(sendData) {
               to_user: parentUser.user_id,
               to_username: parentUser.username,
               score: score_ratio,
-              ticket: reward.ticket,
+              ticket: 0,
               desc: `${parentUser.username} get checkIn reward ${score_ratio} Pts from ${user.username}`
             }
             await Model.Event.create(event_data)
