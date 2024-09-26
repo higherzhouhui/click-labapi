@@ -48,6 +48,7 @@ async function create_user(sendData) {
         }
       })
       if (!userInfo) {
+        const config = await Model.Config.findOne()
         const text = data.text
         if (text.split(' ').length == 2) {
           const parameter = text.split(' ')[1]; // 假设参数紧跟在/start之后
@@ -60,7 +61,6 @@ async function create_user(sendData) {
                 user_id: startParam
               })
               if (parentUser) {
-                const config = await Model.Config.findOne()
                 parentUser.increment({
                   invite_friends_score: config.invite,
                   score: config.invite,
@@ -81,18 +81,89 @@ async function create_user(sendData) {
             }
           }
         }
-        
+        data.ticket = config.ticket
+
         await Model.User.create(data)
         const event_data = {
           type: 'Register',
           from_user: data.user_id,
           to_user: data.user_id,
           score: 0,
+          ticket: data.ticket,
           from_username: data.username,
           to_username: data.username,
           desc: `${data.username} join us!`
         }
         await Model.Event.create(event_data)
+      } else {
+        // 处理邀请游戏链接
+        const text = data.text
+        if (text && text.split(' ').length == 2) {
+          const parameter = text.split(' ')[1]; // 假设参数紧跟在/start之后
+          const startParam = parseInt(atob(parameter))
+          if (!isNaN(startParam)) {
+            if (startParam == data.user_id) {
+              return
+            }
+            // 奖励上级
+            const parentUser = await Model.User.findOne({
+              where: {
+                user_id: startParam
+              }
+            })
+            if (parentUser) {
+              if (!userInfo.startParam) {
+                await userInfo.update({
+                  startParam: startParam
+                })
+              }
+              const todayStart = new Date();
+              todayStart.setHours(0, 0, 0, 0); // 设置今天的开始时间
+              const todayEnd = new Date(todayStart);
+              todayEnd.setDate(todayEnd.getDate() + 1); // 设置今天的结束时间
+
+              const dailyRewards = await Model.Event.findAndCountAll({
+                where: {
+                  type: 'share_reward',
+                  to_user: startParam,
+                  createdAt: {
+                    [dataBase.Op.gt]: todayStart,
+                    [dataBase.Op.lt]: todayEnd
+                  }
+                }
+              })
+              // 每天三次
+              if (dailyRewards.count < 3) {
+                const currentReward = await Model.Event.findAndCountAll({
+                  where: {
+                    type: 'share_reward',
+                    to_user: startParam,
+                    from_user: data.user_id,
+                    createdAt: {
+                      [dataBase.Op.gt]: todayStart,
+                      [dataBase.Op.lt]: todayEnd
+                    }
+                  }
+                })
+                if (!currentReward.count) {
+                  await parentUser.increment({
+                    ticket: 1
+                  })
+                  const event_data = {
+                    type: 'share_reward',
+                    to_user: startParam,
+                    from_user: data.user_id,
+                    from_username: data.username,
+                    to_username: parentUser.username,
+                    ticket: 1,
+                    desc: `${data.username} play game by ${parentUser.username} share link`
+                  }
+                  await Model.Event.create(event_data)
+                }
+              }
+            }
+          }
+        }
       }
     } catch (error) {
       console.error(error)
@@ -650,7 +721,7 @@ async function game_over(sendData, id) {
       if (scriptDetail.longOver) {
         add_score = config.done_really_jb
       }
-      
+
       await user.increment({
         score: add_score,
         complete: 1,
@@ -667,7 +738,7 @@ async function game_over(sendData, id) {
         desc: `${data.username} done a script`
       }
       await Model.Event.create(event_data)
-    
+
       if (user.startParam) {
         const parentUser = await Model.User.findOne({
           where: {
@@ -704,7 +775,7 @@ async function game_over(sendData, id) {
               shortOver: true
             },
             {
-              longOver: true 
+              longOver: true
             }
           ]
         }

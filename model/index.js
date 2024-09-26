@@ -26,7 +26,7 @@ const User = db.sequelize.define(
     task_score: { type: DataTypes.BIGINT, defaultValue: 0 },
     bind_wallet_score: { type: DataTypes.BIGINT, defaultValue: 0 },
     check_date: { type: DataTypes.STRING, defaultValue: '' },
-    ticket: { type: DataTypes.BIGINT, defaultValue: 3 },
+    ticket: { type: DataTypes.BIGINT, defaultValue: 0 },
     wallet: { type: DataTypes.STRING },
     type: { type: DataTypes.STRING },
     lang: { type: DataTypes.STRING, defaultValue: 'en' },
@@ -144,6 +144,7 @@ const Config = db.sequelize.define(
   'config',
   {
     choose_jb: { type: DataTypes.INTEGER, defaultValue: 1 },
+    ticket: { type: DataTypes.INTEGER, defaultValue: 3 },
     reset_jb: { type: DataTypes.INTEGER, defaultValue: 1 },
     invite_friends_ratio: { type: DataTypes.INTEGER, defaultValue: 20 },
     open_new_jb: { type: DataTypes.INTEGER, defaultValue: 50 },
