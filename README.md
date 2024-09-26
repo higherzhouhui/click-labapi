@@ -6,9 +6,9 @@
 ## 连接数据库
 ## mysql -uroot -p
 
-## 创建数据库，名称和密码在env文件中
+## 创建数据库，名称和密码在env文件中,可自定义修改
 
-### create database cat_db;
+### create database lost_db;
 
 ## 安装依赖
 ### yarn 
@@ -24,10 +24,10 @@
 ### npm run start （使用.env配置）
 
 ## 服务器启动，NODEJS进程守卫，使用pm2;npm i pm2 -g
-## 启动 或者 直接 pm2 start server.js --name 'cat_api v1'
+## 启动 或者 直接 pm2 start server.js --name 'Click v1'
 
 ### npm run pm2
 
 ## 接口文档地址
 
-### localhost:8086/api-docs
+### localhost:8741/api-docs
