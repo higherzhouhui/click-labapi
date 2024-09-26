@@ -444,6 +444,9 @@ async function choose_option(sendData, id) {
       list.forEach(element => {
         result.data.list.push(element.dataValues)
       });
+      if (scriptDetail.shortOver || scriptDetail.longOver) {
+        game_over(sendData, id)
+      }
       // if (scriptDetail.shortOver || scriptDetail.longOver) {
       //   let add_score = config.done_jb
       //   if (scriptDetail.longOver) {
@@ -876,6 +879,7 @@ async function user_checkIn(sendData) {
         score: reward.score,
         day: reward.day,
         ticket: reward.ticket,
+        username: user.username,
       }
     } catch (error) {
       console.error(error)

@@ -315,245 +315,245 @@ async function init_scripts() {
         detail: [
           {
             source: 'redroom',
-            title: 'Prologue\nA Mysterious Invitation',
+            title: 'A Mysterious Invitation',
             text: `Your father has been missing for a long time. You and Elena have been close friends for many years, but recently, her sister also mysteriously disappeared. This series of mysterious events has been troubling you both. One evening, while you and Elena are in the apartment, your phone suddenly receives a mysterious link. Upon opening it, you find a livestream titled "Red Room," with an "Enter" option below.`,
             options: [
               {
-                label: `A: Accept the invitation and enter the livestream.`,
+                label: `Accept the invitation and enter the livestream.`,
                 value: '1A',
               },
               {
-                label: `B: Decline the invitation, thinking it’s a trap.`,
+                label: `Decline the invitation, thinking it’s a trap.`,
                 value: '1B',
               },
             ]
           },
           {
             source: '1-1',
-            title: 'Chapter One\nEntering the Red Room',
+            title: 'Entering the Red Room',
             text: `You and Elena enter the livestream, which shows a woman bound in a room seemingly made from the flesh and organs of a gigantic monster. It’s not just a room—it feels like the inside of the monster’s body! Other viewers in the livestream are encouraging different forms of punishment for the woman.\nElena (anxiously): "This... it looks like my sister!"`,
             key: '1A',
             options: [
               {
-                label: `A: Try to stop the livestream.`,
+                label: `Try to stop the livestream.`,
                 value: '2A',
               },
               {
-                label: `B: Convince Elena to observe further for clues before attempting to rescue her sister. `,
+                label: `Convince Elena to observe further for clues before attempting to rescue her sister. `,
                 value: '2A',
               },
             ]
           },
           {
             source: '1-2',
-            title: 'Chapter One\nStrange Occurrences',
+            title: 'Strange Occurrences',
             text: `You refuse to enter the Red Room, but the atmosphere feels eerily quiet. Looking outside, the whole city is bathed in a red glow—more accurately, the entire city seems to be consumed by a massive, unknown red object. Looking toward the door, you see it also emitting the same red light, just like the cover of the livestream…`,
             key: '1B',
             options: [
               {
-                label: `A: Flee the house with Elena.`,
+                label: `Flee the house with Elena.`,
                 value: '2C',
               },
               {
-                label: `B: Reconsider and check the strange invitation again.`,
+                label: `Reconsider and check the strange invitation again.`,
                 value: '2D',
               },
             ]
           },
           {
             source: '2-1',
-            title: 'Chapter Two\nThe Unstoppable Livestream',
+            title: 'The Unstoppable Livestream',
             text: ` You try to plead with the other viewers in the chat to not harm Elena's sister, but your plea only excites them more. A flash of red light occurs, and suddenly, you are pulled into the same place shown in the livestream.\nElena (terrified): "What just happened?..."\nYou: "This place... no... this thing… it’s alive…"`,
             key: '2A',
             options: [
               {
-                label: `A: Search for a way to escape with Elena. `,
+                label: `Search for a way to escape with Elena. `,
                 value: '3A',
               },
               {
-                label: `B: Realize this must be where Elena’s sister is being held and decide to explore further to rescue her.`,
+                label: `Realize this must be where Elena’s sister is being held and decide to explore further to rescue her.`,
                 value: '3B',
               },
             ]
           },
           {
             source: '2-1',
-            title: 'Chapter Two\nWhere Am I',
-            text: `Elena holds back her sadness as she watches the livestream with you. Then, a flash of red light occurs, and you are both pulled into the same place shown in the livestream.\nElena: "Doesn’t this place look like where my sister was kidnapped?"`,
+            title: 'Where Am I',
+            text: `Elena holds back her sadness as she watches the livestream with you. Then, a flash of red light occurs, and you are both pulled into the same place shown in the livestream.\nElen"Doesn’t this place look like where my sister was kidnapped?"`,
             key: '2B',
             options: [
               {
-                label: `A: Search for a way to escape with Elena. `,
+                label: `Search for a way to escape with Elena. `,
                 value: '3A',
               },
               {
-                label: `B: Realize this is where Elena’s sister is being held and decide to explore further to rescue her. `,
+                label: `Realize this is where Elena’s sister is being held and decide to explore further to rescue her. `,
                 value: '3B',
               },
             ]
           },
           {
             source: '2-2',
-            title: 'Chapter Two\nBlinding Red Light',
+            title: 'Blinding Red Light',
             text: ` You and Elena quickly flee from the house, but it’s already too late. The red light gets closer and closer until it engulfs you. In the red light, there seem to be countless twisted faces, and just before you lose consciousness, you think you see... your long-missing father. His face, unlike the others, is not twisted in fear but seems to be smiling...\nYou: "Father?"`,
             key: '2C',
             shortOver: true,
             options: [
               {
-                label: `A: End the script.`,
+                label: `End the script.`,
                 value: 'over',
               },
               {
-                label: `B: Restart.`,
+                label: `Restart.`,
                 value: 'restart',
               },
             ]
           },
           {
             source: '1-1',
-            title: 'Chapter Two\nEntering the Red Room',
-            text: `You reopen the mysterious link and enter the livestream. The scene shows a woman bound in a room seemingly made from the flesh and organs of a gigantic monster. It feels more like being inside the body of a monster than a normal room. The other viewers in the livestream are encouraging different ways to execute the woman.\nElena: "She looks like my sister!"`,
+            title: 'Entering the Red Room',
+            text: `You reopen the mysterious link and enter the livestream. The scene shows a woman bound in a room seemingly made from the flesh and organs of a gigantic monster. It feels more like being inside the body of a monster than a normal room. The other viewers in the livestream are encouraging different ways to execute the woman.\nElen"She looks like my sister!"`,
             key: '2D',
             options: [
               {
-                label: `A: Try to stop the livestream.`,
+                label: `Try to stop the livestream.`,
                 value: '2A',
               },
               {
-                label: `B: Convince Elena to observe further to gather more clues before attempting to rescue her sister.`,
+                label: `Convince Elena to observe further to gather more clues before attempting to rescue her sister.`,
                 value: '2A',
               },
             ]
           },
           {
             source: '2-2',
-            title: 'Chapter Three\nCage of Flesh',
+            title: 'Cage of Flesh',
             text: `You attempt to escape, but the place seems endless. Exhausted, you hear your father’s voice whispering in your ears. Could it be that your father is trapped here too? As you collapse, the red glow draws closer. Among the twisted faces in the light, you see... your long-missing father. His face is not contorted in fear like the others; he seems to be smiling…\nYou: "Father?"`,
             key: '3A',
             shortOver: true,
             options: [
               {
-                label: `A: End the script.`,
+                label: `End the script.`,
                 value: 'over',
               },
               {
-                label: `B: Restart.`,
+                label: `Restart.`,
                 value: 'restart',
               },
             ]
           },
           {
             source: '3',
-            title: `Chapter Three\nThe Father's Secret`,
+            title: `The Father's Secret`,
             text: `You try to find Elena’s sister and eventually spot her in a corner. But unlike the livestream, her body is now fused with the Red Room. At that moment, you both hear a voice—it’s your father’s voice!\nElena (horrified): "Sister!"\nYou: "Dad!"`,
             key: '3B',
             options: [
               {
-                label: `A: Search for your father. `,
+                label: `Search for your father. `,
                 value: '4A',
               },
               {
-                label: `B: Try to rescue Elena’s sister first.`,
+                label: `Try to rescue Elena’s sister first.`,
                 value: '4B',
               },
             ]
           },
           {
             source: '4',
-            title: 'Chapter Four\nThe Monster',
+            title: 'nThe Monster',
             text: `You shout desperately, calling out for "Dad"! Suddenly, you feel a rumbling sound beneath your feet, shaking the entire space. Shocked, you fall to the ground…\nFather: "No need to search, you’re already standing on my body…"\nYou: "Dad! What happened?"\nFather: "I’m sorry, I created this monster... It’s too late now. The Red Room has consumed me, and it will consume you too. Don’t waste your time, unless…"\nFather continues: "Son, join me. Together, we can devour the whole world!"`,
             key: '4A',
             options: [
               {
-                label: `A: Believe your father and fuse with the Red Room. `,
+                label: `Believe your father and fuse with the Red Room. `,
                 value: '5A',
               },
               {
-                label: `B: Search for a way to kill your father. `,
+                label: `Search for a way to kill your father. `,
                 value: '5B',
               },
             ]
           },
           {
             source: '4-1',
-            title: 'Chapter Four\nWhom Should I Save?',
+            title: 'nWhom Should I Save?',
             text: `You try to forcibly pull Elena’s sister out of the wall. The Red Room seems to react in pain, letting out agonizing groans that increasingly resemble your father’s voice…\n紅房子：「兒子，兒子……」\nRed Room: "Son, son…"\nYou: "Dad?! What’s happening?"\nFather: "Stop pulling her out of my body! If you keep going, I’ll die!"`,
             key: '4B',
             options: [
               {
-                label: `A: Continue trying to separate Elena’s sister from the Red Room. `,
+                label: `Continue trying to separate Elena’s sister from the Red Room. `,
                 value: '5C',
               },
               {
-                label: `B: Believe your father and watch as the Red Room consumes Elena’s sister. `,
+                label: `Believe your father and watch as the Red Room consumes Elena’s sister. `,
                 value: '5D',
               },
             ]
           },
           {
             source: '5',
-            title: 'Chapter Five\nThe Mysterious Invitation',
+            title: 'The Mysterious Invitation',
             text: `Michael's father has been missing for a long time. One evening, Michael’s phone suddenly receives a mysterious link. Upon opening it, he finds a livestream titled "The Red Room," with an "Enter" option below...`,
             key: '5A',
             longOver: true,
             options: [
               {
-                label: `A: End the script.`,
+                label: `End the script.`,
                 value: 'over',
               },
               {
-                label: `B: Restart.`,
+                label: `Restart.`,
                 value: 'restart',
               },
             ]
           },
           {
             source: '5-1',
-            title: 'Chapter Five\nThe Collapse',
+            title: 'The Collapse',
             text: `You can’t accept none of this. Then you notice something—it looks like a giant heart beating in the depths of the Red Room. You approach and punch it with all your strength, again and again.\nFather: "Stop!"\nYour actions seem to have an effect, and the Red Room begins to collapse…`,
             key: '5B',
             longOver: true,
             options: [
               {
-                label: `A: End the script.`,
+                label: `End the script.`,
                 value: 'over',
               },
               {
-                label: `B: Restart.`,
+                label: `Restart.`,
                 value: 'restart',
               },
             ]
           },
           {
             source: '5-1',
-            title: 'Chapter Five\nDestruction',
+            title: 'Destruction',
             text: `Ignoring your father’s plea, you continue to pull Elena’s sister from the walls.\nFather: "Stop!"\nYour efforts seem successful, but at that moment, everything starts to blur. You watch as the Red Room begins to collapse…`,
             key: '5C',
             longOver: true,
             options: [
               {
-                label: `A: End the script.`,
+                label: `End the script.`,
                 value: 'over',
               },
               {
-                label: `B: Restart.`,
+                label: `Restart.`,
                 value: 'restart',
               },
             ]
           },
           {
             source: '5-2',
-            title: 'Chapter Five\nThe Puppet',
+            title: 'The Puppet',
             text: `You seem to be under some kind of control, helplessly watching as the Red Room devours Elena’s sister…\nFather: "Good, my son..."\nFather continues: "Now, it’s Elena’s turn…"`,
             key: '5D',
             longOver: true,
             options: [
               {
-                label: `A: End the script.`,
+                label: `End the script.`,
                 value: 'over',
               },
               {
-                label: `B: Restart.`,
+                label: `Restart.`,
                 value: 'restart',
               },
             ]
