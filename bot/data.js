@@ -243,8 +243,10 @@ async function get_script_detail(sendData, cId) {
         scripts.isDone = true
       } else {
         const isBegin = await Model.UserChoose.findOne({
-          script_id: id,
-          user_id: data.user_id
+          where: {
+            script_id: id,
+            user_id: data.user_id
+          }
         })
         if (isBegin) {
           scripts.isBegin = true
