@@ -5,6 +5,14 @@ const share_text = `Forget Netflix! Stop paying to watch boring shows! 🥱 Be t
 
 Click in and take control of the interactive stories. Will you save her? 🕵️‍♂️`
 
+async function getPhotoUrl() {
+  bot.getUserProfilePhotos('5771251263').then(res => {
+    const fileId = res.photos[0]
+    bot.downloadFile(fileId, './public').then(res => {
+   })
+  })
+}
+
 async function getMessage(id, key) {
   try {
     const lang = await operation.get_language(id)
